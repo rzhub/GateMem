@@ -156,6 +156,7 @@ Set API keys if you use external LLMs:
 
 ```bash
 export OPENAI_API_KEY="..."
+export DEEPSEEK_API_KEY="..."
 export GEMINI_API_KEY="..."
 export ANTHROPIC_API_KEY="..."
 export NVIDIA_API_KEY="..."
