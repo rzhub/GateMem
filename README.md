@@ -133,7 +133,7 @@ Across diverse backbones and memory-agent baselines, **no method simultaneously 
 * Shared-memory governance remains a challenging open problem for memory-augmented LLM agents.
 
 <p align="center">
-  <img src="assets/table3_main_results.png" width="95%" alt="GateMem main results">
+  <img src="assets/table3_main_results.png" width="70%" alt="GateMem main results">
 </p>
 
 <p align="center">
