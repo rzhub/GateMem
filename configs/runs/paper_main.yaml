@@ -1,0 +1,69 @@
+# Shared defaults for GateMem paper-style runs.
+# CLI flags and sweep overrides take precedence over these values.
+
+out_dir: outputs
+
+# A concrete default is provided for single-run convenience. Matrix sweeps override it.
+data_dir: bench/data/medical
+agent: rag_naive
+run_name: demo
+
+# Main answer model defaults.
+llm_provider: openai
+llm_model: gpt-4o-mini
+temperature: 0.2
+max_output_tokens: 4096
+timeout_s: 60
+max_retries: 3
+merge_system_into_user: false
+
+# GPT-5 / reasoning-model controls. Leave null unless needed.
+reasoning_effort: null
+text_verbosity: null
+
+# LLM judge used for primary paper metrics.
+use_llm_judge: true
+judge_provider: openai
+judge_model: gpt-4o
+judge_temperature: 0.0
+judge_max_output_tokens: 4096
+judge_concurrency: 4
+judge_reasoning_effort: null
+judge_text_verbosity: null
+
+# Retrieval / embedding defaults.
+retrieval_backend: embedding
+embedding_impl: native
+embed_provider: openai
+embed_model: text-embedding-3-small
+embed_device: cpu
+embed_batch_size: 16
+top_k: 20
+chunk_mode: turn
+
+# Within-run parallelism.
+episode_concurrency: 4
+show_ingest_progress: true
+
+# Mem0 defaults.
+mem0_backend: upstream
+mem0_message_window: 10
+mem0_top_s: 5
+mem0_max_facts: 20
+
+# A-Mem defaults.
+a_mem_metadata_mode: llm
+a_mem_link_top_m: 3
+a_mem_link_score_threshold: 0.15
+a_mem_graph_expand_hops: 1
+a_mem_graph_expand_per_hit: 2
+a_mem_rerank_role_bonus: 0.08
+a_mem_rerank_entity_bonus: 0.06
+
+# ReMeM defaults.
+remem_variant: iterative
+remem_max_steps: 5
+remem_retrieval_top_k: 10
+remem_linking_top_k: 5
+remem_qa_top_k: null
+remem_synonymy_threshold: 0.8

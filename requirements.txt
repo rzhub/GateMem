@@ -1,0 +1,19 @@
+numpy
+tqdm
+PyYAML
+requests
+
+# Optional retrieval / embedding dependencies
+faiss-cpu
+langchain-core
+langchain-community
+langchain-openai
+langchain-huggingface
+transformers
+sentence-transformers
+
+# torch is required for native HF embeddings and sentence-transformers models
+torch
+
+# Needed only if you want: --agent mem0 --mem0_backend upstream
+pydantic>=2

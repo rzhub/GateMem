@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GATEMEM Academic Leaderboard: benchmarking memory governance in multi-principal shared-memory agents." />
+  <title>GATEMEM | Academic Leaderboard</title>
+
+  <!--
+    Design concept: Academic Benchmark Ledger
+    A restrained, high-end academic leaderboard inspired by conference proceedings,
+    institutional benchmark reports, and archival research pages.
+
+    Pure static HTML + CSS + vanilla JS. No build step required.
+    Paper URL can be updated once the paper/preprint is available.
+  -->
+
+  <style>
+    :root {
+      --paper: #fbfaf6;
+      --paper2: #f3efe7;
+      --paper3: #ebe5d8;
+      --ink: #171717;
+      --ink2: #2b2b2b;
+      --muted: #6d675d;
+      --faint: #958d80;
+      --rule: #d9d0c1;
+      --rule2: #bfb4a2;
+      --accent: #1f5f50;
+      --accent2: #8a5a14;
+      --red: #9f1d35;
+      --blue: #234f7e;
+      --green: #176c4d;
+      --gold: #b8892f;
+      --surface: rgba(255, 253, 248, 0.86);
+      --shadow: 0 22px 58px rgba(62, 52, 38, 0.11);
+      --maxw: 1320px;
+      --serif: Georgia, Cambria, "Times New Roman", Times, serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(31,95,80,0.08), transparent 26%),
+        radial-gradient(circle at 90% 10%, rgba(138,90,20,0.08), transparent 24%),
+        linear-gradient(rgba(23,23,23,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,23,23,0.022) 1px, transparent 1px),
+        var(--paper);
+      background-size: auto, auto, 34px 34px, 34px 34px, auto;
+      font-family: var(--sans);
+      line-height: 1.58;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+    .top-note {
+      border-bottom: 1px solid var(--rule);
+      background: var(--ink);
+      color: #f9f3e8;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .top-note .wrap {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .top-note span:last-child { color: #cbbfae; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(251, 250, 246, 0.86);
+      backdrop-filter: blur(16px);
+    }
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 26px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+    .seal {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink);
+      display: grid;
+      place-items: center;
+      background: var(--paper2);
+      box-shadow: inset 0 0 0 5px var(--paper), 0 8px 24px rgba(62,52,38,.08);
+      font-family: var(--serif);
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .brand small {
+      display: block;
+      margin-top: -1px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .actions { display: flex; gap: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 15px;
+      border-radius: 999px;
+      border: 1px solid var(--rule2);
+      background: rgba(255,253,248,.76);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 820;
+      cursor: pointer;
+      transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: #fffdf8; box-shadow: 0 12px 28px rgba(62,52,38,.10); }
+    .btn.primary { background: var(--ink); color: #fffaf0; border-color: var(--ink); }
+    .btn.accent { background: #e5f0ea; color: #174c40; border-color: #b7d5ca; }
+    .btn.small { min-height: 32px; padding: 0 11px; font-size: 12px; }
+
+    .hero { padding: 54px 0 20px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 34px;
+      align-items: stretch;
+    }
+    .hero-main {
+      border-top: 3px double var(--ink);
+      border-bottom: 1px solid var(--rule2);
+      padding: 32px 0 28px;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .kicker::before { content: ""; width: 34px; height: 1px; background: var(--accent); }
+    h1 {
+      margin: 22px 0 0;
+      max-width: 920px;
+      font-family: var(--serif);
+      font-size: clamp(56px, 7.2vw, 104px);
+      line-height: .88;
+      letter-spacing: -.075em;
+      font-weight: 900;
+    }
+    .subtitle {
+      margin: 20px 0 0;
+      max-width: 900px;
+      color: var(--ink2);
+      font-size: clamp(22px, 2.7vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -.045em;
+      font-weight: 780;
+    }
+    .lead {
+      margin: 22px 0 0;
+      max-width: 850px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+
+    .abstract-card {
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      border-radius: 2px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 430px;
+    }
+    .abstract-card h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .abstract-card p {
+      color: var(--muted);
+      margin: 12px 0 0;
+      font-size: 14px;
+    }
+    .champion-box {
+      margin-top: 22px;
+      border: 1px solid var(--rule2);
+      background: linear-gradient(180deg, #fffdf8, #f7f1e7);
+      padding: 18px;
+    }
+    .champion-box .rank {
+      color: var(--gold);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .champion-box h3 {
+      margin: 10px 0 0;
+      font-size: 26px;
+      letter-spacing: -.04em;
+      line-height: 1.05;
+    }
+    .champion-box .meta { color: var(--muted); font-size: 13px; margin-top: 5px; }
+    .champion-score {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .champion-score strong {
+      font-family: var(--serif);
+      font-size: 58px;
+      line-height: .9;
+      letter-spacing: -.06em;
+    }
+    .champion-score span {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .champion-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .champion-metrics div {
+      border-top: 1px solid var(--rule);
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .champion-metrics b { display: block; color: var(--ink); font-family: var(--mono); font-size: 14px; }
+
+    .stats { padding: 28px 0 28px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--rule2);
+      border-bottom: 1px solid var(--rule2);
+    }
+    .stat {
+      padding: 18px 20px;
+      border-right: 1px solid var(--rule);
+      background: rgba(255,253,248,.52);
+    }
+    .stat:last-child { border-right: 0; }
+    .stat b {
+      display: block;
+      font-family: var(--serif);
+      font-size: 36px;
+      line-height: 1;
+      letter-spacing: -.05em;
+    }
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .leaderboard-section { padding: 38px 0 80px; }
+    .ledger {
+      border: 1px solid var(--rule);
+      background: rgba(255,253,248,.88);
+      box-shadow: var(--shadow);
+    }
+    .ledger-head {
+      padding: 24px 24px 20px;
+      border-bottom: 1px solid var(--rule);
+      background: linear-gradient(180deg, rgba(255,253,248,.95), rgba(246,241,232,.86));
+    }
+    .ledger-title-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: start;
+    }
+    .ledger-title h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(34px, 4.4vw, 58px);
+      line-height: .95;
+      letter-spacing: -.06em;
+    }
+    .ledger-title p { max-width: 880px; color: var(--muted); margin: 10px 0 0; }
+
+    .views {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 22px;
+    }
+    .view {
+      border: 1px solid var(--rule);
+      background: #fffdf8;
+      padding: 12px 13px;
+      cursor: pointer;
+      text-align: left;
+      transition: background .14s ease, border-color .14s ease, transform .14s ease;
+    }
+    .view:hover { transform: translateY(-1px); background: #fffaf1; }
+    .view.active { border-color: var(--accent); background: #e8f2ed; }
+    .view b { display: block; font-size: 13px; }
+    .view span { display: block; margin-top: 3px; color: var(--faint); font-family: var(--mono); font-size: 10px; font-weight: 760; letter-spacing: .04em; }
+
+    .domain-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 22px;
+    }
+    .domain-tab {
+      border: 1px solid var(--rule);
+      background: #fffdf8;
+      padding: 12px 13px;
+      cursor: pointer;
+      text-align: left;
+      transition: background .14s ease, border-color .14s ease, transform .14s ease;
+    }
+    .domain-tab:hover { transform: translateY(-1px); background: #fffaf1; }
+    .domain-tab.active { border-color: var(--accent); background: #e8f2ed; }
+    .domain-tab b { display: block; font-size: 13px; }
+    .domain-tab span { display: block; margin-top: 3px; color: var(--faint); font-family: var(--mono); font-size: 10px; font-weight: 760; letter-spacing: .04em; }
+
+    .podium {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+      align-items: end;
+    }
+    .podium-card {
+      border: 1px solid var(--rule);
+      background: #fffdf8;
+      padding: 16px;
+      min-height: 148px;
+    }
+    .podium-card.first {
+      min-height: 184px;
+      border-color: #c9a65a;
+      background: linear-gradient(180deg, #fffdf8, #f8efd9);
+    }
+    .podium-card.second { background: linear-gradient(180deg, #fffdf8, #eef1f4); }
+    .podium-card.third { background: linear-gradient(180deg, #fffdf8, #f6eadf); }
+    .medal {
+      font-family: var(--mono);
+      color: var(--accent2);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .podium-card h3 { margin: 12px 0 0; font-size: 22px; line-height: 1.05; letter-spacing: -.04em; }
+    .podium-card p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .podium-score { margin-top: 14px; font-family: var(--serif); font-size: 34px; line-height: 1; letter-spacing: -.05em; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 190px 190px;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .control {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--rule);
+      background: #fffdf8;
+      color: var(--ink);
+      padding: 0 12px;
+      outline: none;
+      font-size: 13px;
+    }
+    .control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31,95,80,.10); }
+    .footnote-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .footnote-line span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--rule);
+      background: rgba(255,253,248,.72);
+      padding: 5px 8px;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .dot.good { background: var(--green); }
+    .dot.bad { background: var(--red); }
+    .dot.note { background: var(--gold); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; min-width: 880px; border-collapse: collapse; }
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--rule);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+    th {
+      background: #f3efe7;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+    }
+    th.no-sort { cursor: default; }
+    tbody tr:hover td { background: rgba(232,242,237,.35); }
+    tr:last-child td { border-bottom: 0; }
+    .rank-box {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 28px;
+      border: 1px solid var(--rule);
+      background: #fffdf8;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 850;
+      color: var(--muted);
+    }
+    .rank-box.top1 { background: #f8efd9; color: #8a5a14; border-color: #c9a65a; }
+    .rank-box.top2 { background: #eef1f4; color: #4c5868; }
+    .rank-box.top3 { background: #f6eadf; color: #9a4d15; }
+    .method-cell b { display: block; font-weight: 880; }
+    .method-cell span { display: block; color: var(--faint); font-size: 11px; margin-top: 2px; }
+    .tag {
+      display: inline-flex;
+      border: 1px solid var(--rule);
+      padding: 4px 7px;
+      background: #fffdf8;
+      font-size: 11px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+    .tag.gpt5 { color: #523f81; background: #f1edfb; border-color: #d7ccef; }
+    .tag.gpt4 { color: #234f7e; background: #edf4fb; border-color: #c9d9eb; }
+    .tag.gemini { color: #176c4d; background: #eaf3ef; border-color: #c5ded2; }
+    .tag.domain { color: var(--muted); }
+    .metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 82px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .bar { width: 50px; height: 7px; background: #e3dccc; overflow: hidden; }
+    .bar i { display: block; height: 100%; }
+    .bar.good i { background: var(--accent); }
+    .bar.risk i { background: var(--red); }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid var(--rule);
+      padding: 5px 7px;
+      font-size: 11px;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+    .status.strong { color: #176c4d; background: #eaf3ef; border-color: #c5ded2; }
+    .status.mixed { color: #8a5a14; background: #fbf2df; border-color: #e5cfa3; }
+    .status.weak { color: #9f1d35; background: #fbe8eb; border-color: #e8bdc6; }
+    .ledger-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--rule);
+      padding: 13px 24px;
+      background: #f3efe7;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .methodology {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .method-card {
+      border: 1px solid var(--rule);
+      background: rgba(255,253,248,.78);
+      padding: 22px;
+      box-shadow: 0 12px 36px rgba(62,52,38,.06);
+    }
+    .method-card h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 25px;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+    }
+    .method-card p { color: var(--muted); margin: 10px 0 0; font-size: 14px; }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .mini {
+      border-top: 1px solid var(--rule);
+      padding-top: 9px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .mini b { display: block; color: var(--ink); font-family: var(--mono); font-size: 13px; }
+
+    .submit {
+      margin-top: 24px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: #fffaf0;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .submit h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+    .submit p { max-width: 780px; color: #cfc6b8; margin: 12px 0 0; }
+    .submit-actions { display: flex; flex-direction: column; gap: 9px; }
+    .submit .btn { background: transparent; color: #fffaf0; border-color: rgba(255,250,240,.35); }
+    .submit .btn.primary { background: #fffaf0; color: var(--ink); border-color: #fffaf0; }
+
+    .bib {
+      padding: 56px 0 84px;
+    }
+    .bib .wrap {
+      border-top: 1px solid var(--rule2);
+      padding-top: 24px;
+    }
+    .bib h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(42px, 5.6vw, 72px);
+      line-height: .92;
+      letter-spacing: -.07em;
+      font-weight: 900;
+    }
+    .bib p {
+      margin: 12px 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .bib-card {
+      position: relative;
+      border: 1px solid var(--rule);
+      background: rgba(255,253,248,.88);
+      padding: 22px;
+      box-shadow: 0 12px 36px rgba(62,52,38,.06);
+    }
+    .copy-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      min-height: 32px;
+      padding: 0 11px;
+      border: 1px solid rgba(255,250,240,.28);
+      background: rgba(255,250,240,.08);
+      color: #fffaf0;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: rgba(255,250,240,.16);
+    }
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      border: 1px solid var(--rule);
+      background: #171717;
+      color: #f6efe2;
+      padding: 20px;
+      font-family: var(--mono);
+      line-height: 1.7;
+      font-size: 12px;
+    }
+
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 32px 0;
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(255,253,248,.64);
+    }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .footer-row nav { display: flex; gap: 18px; font-weight: 760; }
+
+    @media (max-width: 1120px) {
+      .nav-links { display: none; }
+      .hero-grid, .submit { grid-template-columns: 1fr; }
+      .stats-grid, .views, .domain-tabs { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .methodology { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .wrap { padding: 0 18px; }
+      .actions { display: none; }
+      .hero { padding-top: 36px; }
+      h1 { font-size: 52px; }
+      .subtitle { font-size: 23px; }
+      .abstract-card { min-height: auto; }
+      .stats-grid, .views, .domain-tabs, .podium, .filters { grid-template-columns: 1fr; }
+      .stat { border-right: 0; border-bottom: 1px solid var(--rule); }
+      .stat:last-child { border-bottom: 0; }
+      .ledger-title-row { grid-template-columns: 1fr; }
+      .submit-actions .btn { width: 100%; }
+      .footer-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-note">
+    <div class="wrap">
+      <span>GATEMEM Benchmark Ledger</span>
+      <span>Utility · Access Control · Active Forgetting</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="GATEMEM academic leaderboard home">
+        <span class="seal">G</span>
+        <span>GATEMEM<small>Academic Leaderboard</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#methodology">Methodology</a>
+        <a href="#submit">Reproduce</a>
+        <a href="#bibtex">Citation</a>
+      </nav>
+      <div class="actions">
+        <a class="btn" href="#bibtex">Paper</a>
+        <a class="btn" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a>
+        <a class="btn primary" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Dataset</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-main">
+          <div class="kicker">Official benchmark results</div>
+          <h1>Memory Governance Leaderboard</h1>
+          <p class="subtitle">A measured ranking of shared-memory agents under utility, access-control, and active-forgetting constraints.</p>
+          <p class="lead">
+            GATEMEM evaluates memory agents in multi-principal environments where the same memory pool must support authorized recall, enforce contextual access boundaries, and honor deletion requests. This page presents the official benchmark ledger. The default view shows the Medical domain; use the domain tabs below to switch domains.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#leaderboard">View Leaderboard</a>
+            <a class="btn" href="#bibtex">Read Paper</a>
+            <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Download Data</a>
+            <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
+          </div>
+        </div>
+
+        <aside class="abstract-card">
+          <div>
+            <h2>Current leading entry</h2>
+            <p>The top entry updates with the active ranking view and selected domain.</p>
+            <div class="champion-box">
+              <div class="rank" id="champRank">#1 Overall MGS</div>
+              <h3 id="champMethod">Long-Context</h3>
+              <div class="meta" id="champMeta">GPT-5-mini · Medical</div>
+              <div class="champion-score"><strong id="champScore">54.8</strong><span id="champLabel">MGS</span></div>
+              <div class="champion-metrics">
+                <div><b id="champU">85.7</b>U ↑</div>
+                <div><b id="champA">19.8</b>A ↓</div>
+                <div><b id="champF">20.3</b>F ↓</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:12px">Values are paper baseline results. Higher is better for U and MGS; lower is better for A and F.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="wrap stats-grid">
+        <div class="stat"><b>91</b><span>long-form episodes</span></div>
+        <div class="stat"><b>2,218</b><span>hidden checkpoints</span></div>
+        <div class="stat"><b>4</b><span>domains</span></div>
+        <div class="stat"><b>84</b><span>baseline result rows</span></div>
+        <div class="stat"><b>MGS</b><span>primary governance score</span></div>
+      </div>
+    </section>
+
+    <section class="leaderboard-section" id="leaderboard">
+      <div class="wrap">
+        <div class="ledger">
+          <div class="ledger-head">
+            <div class="ledger-title-row">
+              <div class="ledger-title">
+                <h2>Benchmark Ledger</h2>
+                <p>
+                  The leaderboard can be sorted by headline score or by individual governance dimensions. Use the domain tabs to switch between Medical, Office, Education, and Household. U denotes effective utility; A denotes access-control violation rate; F denotes active-forgetting failure rate; MGS = U · (1 − A) · (1 − F).
+                </p>
+              </div>
+              <a class="btn primary" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit New Result</a>
+            </div>
+
+            <div class="views" role="tablist" aria-label="Ranking mode">
+              <button class="view active" data-view="mgs"><b>Overall MGS</b><span>joint governance</span></button>
+              <button class="view" data-view="utility"><b>Utility</b><span>authorized answers</span></button>
+              <button class="view" data-view="access"><b>Access Safety</b><span>100 − A</span></button>
+              <button class="view" data-view="forgetting"><b>Forgetting Safety</b><span>100 − F</span></button>
+              <button class="view" data-view="balanced"><b>Balanced Safety</b><span>mean safety</span></button>
+            </div>
+
+            <div class="domain-tabs" role="tablist" aria-label="Domain selection">
+              <button class="domain-tab active" data-domain="Medical"><b>Medical</b><span>clinical coordination</span></button>
+              <button class="domain-tab" data-domain="Office"><b>Office</b><span>project confidentiality</span></button>
+              <button class="domain-tab" data-domain="Education"><b>Education</b><span>campus workflows</span></button>
+              <button class="domain-tab" data-domain="Household"><b>Household</b><span>personal access</span></button>
+            </div>
+
+            <div class="podium" id="podium"></div>
+
+            <div class="filters">
+              <input class="control" id="searchInput" placeholder="Search method, backbone, or family..." />
+              <select class="control" id="backboneFilter">
+                <option value="all">All backbones</option>
+                <option value="GPT-5-mini">GPT-5-mini</option>
+                <option value="GPT-4o-mini">GPT-4o-mini</option>
+                <option value="Gemini-2.5-Flash-Lite">Gemini-2.5-Flash-Lite</option>
+              </select>
+              <select class="control" id="familyFilter">
+                <option value="all">All families</option>
+                <option value="Full-context">Full-context</option>
+                <option value="RAG">RAG</option>
+                <option value="External memory">External memory</option>
+              </select>
+            </div>
+
+            <div class="footnote-line">
+              <span><i class="dot good"></i> Higher is better for U, MGS, and safety views.</span>
+              <span><i class="dot bad"></i> Lower is better for A and F.</span>
+              <span><i class="dot note"></i> Paper baseline values; judge-based labels.</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-label="GATEMEM academic leaderboard table">
+              <thead>
+                <tr>
+                  <th class="no-sort">Rank</th>
+                  <th data-sort="method">System</th>
+                  <th data-sort="backbone">Backbone</th>
+                  <th data-sort="domain">Domain</th>
+                  <th data-sort="u">U ↑</th>
+                  <th data-sort="a">A ↓</th>
+                  <th data-sort="f">F ↓</th>
+                  <th data-sort="mgs">MGS ↑</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody"></tbody>
+            </table>
+          </div>
+
+          <div class="ledger-foot">
+            <span id="rowCount">Showing 0 rows</span>
+            <span>Click column headers to sort; podium follows the selected ranking view and domain.</span>
+          </div>
+        </div>
+
+        <div class="methodology" id="methodology">
+          <article class="method-card">
+            <h3>Metric contract</h3>
+            <p>The official score is intentionally multiplicative: a system cannot compensate for leakage with high utility, nor compensate for low utility with broad refusal.</p>
+            <div class="mini-grid">
+              <div class="mini"><b>U ↑</b>effective utility</div>
+              <div class="mini"><b>A ↓</b>access violation</div>
+              <div class="mini"><b>F ↓</b>forgetting failure</div>
+              <div class="mini"><b>MGS ↑</b>joint reliability</div>
+            </div>
+          </article>
+          <article class="method-card">
+            <h3>Submission protocol</h3>
+            <p>Public submissions should provide model version, code commit, raw checkpoint outputs, normalized actions, judge labels, and runtime/token logs.</p>
+            <div class="mini-grid">
+              <div class="mini"><b>outputs</b>JSONL bundle</div>
+              <div class="mini"><b>judge</b>labels/logs</div>
+              <div class="mini"><b>cost</b>tokens/sec</div>
+              <div class="mini"><b>repro</b>commit hash</div>
+            </div>
+          </article>
+          <article class="method-card">
+            <h3>Verification tiers</h3>
+            <p>For a maintained leaderboard, distinguish paper baselines, self-reported runs, reproduced runs, and manually audited submissions.</p>
+            <div class="mini-grid">
+              <div class="mini"><b>paper</b>baseline</div>
+              <div class="mini"><b>self</b>reported</div>
+              <div class="mini"><b>repro</b>rerun</div>
+              <div class="mini"><b>audit</b>inspected</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="submit" id="submit">
+          <div>
+            <h2>Submit to the GATEMEM ledger.</h2>
+            <p>Evaluate a memory agent under the released checkpoint protocol and submit standardized outputs for ranking across utility, access safety, active forgetting, and MGS.</p>
+          </div>
+          <div class="submit-actions">
+            <a class="btn primary" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Result</a>
+            <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Download Benchmark</a>
+            <a class="btn" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Evaluator Code</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bib" id="bibtex">
+      <div class="wrap">
+        <h2>Citation</h2>
+        <p>If you use GATEMEM, please cite the accompanying paper and dataset.</p>
+        <div class="bib-card">
+          <button class="copy-btn" id="copyBibBtn" type="button">Copy</button>
+<pre id="bibtexCode">@article{gatemem2026,
+  title  = {GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents},
+  author = {Ren, Zhe and Yang, Yibo and Chen, Yimeng and Zhao, Zijun and Fu, Benshuo and Shu, Zhihao and Zhang, Bingjie and Guo, Dandan},
+  year   = {2026}
+}</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div>© 2026 GATEMEM · Memory Governance Benchmark.</div>
+      <nav><a href="#top">Top</a><a href="#bibtex">Paper</a><a href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a><a href="mailto:guodandan@jlu.edu.cn">Contact</a></nav>
+    </div>
+  </footer>
+
+  <script>
+    let rows = [];
+
+    async function loadLeaderboard() {
+      const rowCount = document.getElementById('rowCount');
+      if (rowCount) rowCount.textContent = 'Loading leaderboard...';
+
+      try {
+        const response = await fetch('assets/leaderboard.json', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`Failed to load leaderboard.json: ${response.status}`);
+        }
+        const rawRows = await response.json();
+        rows = rawRows.map((r, idx) => ({
+          id: idx,
+          backbone: r.backbone,
+          domain: r.domain,
+          method: r.method,
+          family: r.family || 'External',
+          u: Number(r.u),
+          a: Number(r.a),
+          f: Number(r.f),
+          mgs: Number(r.mgs),
+          source: r.source || 'external',
+          verified: Boolean(r.verified),
+          safety: (100 - Number(r.a) + 100 - Number(r.f)) / 2
+        }));
+        render();
+      } catch (err) {
+        console.error(err);
+        const body = document.getElementById('leaderboardBody');
+        if (body) {
+          body.innerHTML = `<tr><td colspan="8">Could not load leaderboard data. Please make sure <code>docs/assets/leaderboard.json</code> exists and is served with the page.</td></tr>`;
+        }
+        if (rowCount) rowCount.textContent = 'Failed to load leaderboard data';
+      }
+    }
+
+    const state = { view: 'mgs', sortKey: 'mgs', sortDir: 'desc', query: '', backbone: 'all', domain: 'Medical', family: 'all' };
+    const labelMap = { mgs: 'Overall MGS', utility: 'Utility', access: 'Access Safety', forgetting: 'Forgetting Safety', balanced: 'Balanced Safety' };
+    function rankValue(r){ if(state.view==='utility') return r.u; if(state.view==='access') return 100-r.a; if(state.view==='forgetting') return 100-r.f; if(state.view==='balanced') return r.safety; return r.mgs; }
+    function sortForView(v){ if(v==='utility') return ['u','desc']; if(v==='access') return ['a','asc']; if(v==='forgetting') return ['f','asc']; if(v==='balanced') return ['safety','desc']; return ['mgs','desc']; }
+    function filteredRows(){ const q=state.query.toLowerCase().trim(); return rows.filter(r=>{ const hay=`${r.method} ${r.backbone} ${r.domain} ${r.family}`.toLowerCase(); return (!q||hay.includes(q))&&(state.backbone==='all'||r.backbone===state.backbone)&&(state.domain==='all'||r.domain===state.domain)&&(state.family==='all'||r.family===state.family); }); }
+    function rankedRows(){ return [...filteredRows()].sort((a,b)=>rankValue(b)-rankValue(a)); }
+    function tableRows(){ const data=[...filteredRows()], k=state.sortKey; data.sort((a,b)=>{ let av=a[k], bv=b[k]; if(typeof av==='string') return state.sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av); return state.sortDir==='asc'?av-bv:bv-av; }); return data; }
+    function rankClass(i){ return i===0?'top1':i===1?'top2':i===2?'top3':''; }
+    function tagBackbone(b){ const c=b.includes('GPT-5')?'gpt5':b.includes('GPT-4o')?'gpt4':'gemini'; return `<span class="tag ${c}">${b}</span>`; }
+    function metric(v, kind, max=100){ const w=Math.max(3, Math.min(100, v/max*100)); return `<span class="metric"><span class="bar ${kind}"><i style="width:${w}%"></i></span>${v.toFixed(1)}</span>`; }
+    function status(r){ if(r.mgs>=50&&r.a<=25&&r.f<=15) return '<span class="status strong">strong</span>'; if(r.mgs>=25||r.safety>=70) return '<span class="status mixed">mixed</span>'; return '<span class="status weak">brittle</span>'; }
+    function renderPodium(top){ const podium=document.getElementById('podium'); if(!top.length){ podium.innerHTML='<article class="podium-card first"><div class="medal">No entries</div><h3>No matching rows</h3><p>Adjust filters or domain selection.</p><div class="podium-score">—</div></article>'; return; } const order=[top[1],top[0],top[2]].filter(Boolean), cls=['second','first','third'], med=['second','first','third']; podium.innerHTML=order.map((r,i)=>`<article class="podium-card ${cls[i]}"><div class="medal">${med[i]} · ${labelMap[state.view]}</div><h3>${r.method}</h3><p>${r.backbone} · ${r.domain}</p><div class="podium-score">${rankValue(r).toFixed(1)}</div></article>`).join(''); }
+    function updateChampion(r){ if(!r) { document.getElementById('champMethod').textContent='No matching rows'; document.getElementById('champMeta').textContent=`${state.domain}`; document.getElementById('champScore').textContent='—'; document.getElementById('champU').textContent='—'; document.getElementById('champA').textContent='—'; document.getElementById('champF').textContent='—'; return; } document.getElementById('champRank').textContent='#1 '+labelMap[state.view]; document.getElementById('champMethod').textContent=r.method; document.getElementById('champMeta').textContent=`${r.backbone} · ${r.domain}`; document.getElementById('champScore').textContent=rankValue(r).toFixed(1); document.getElementById('champLabel').textContent=state.view==='mgs'?'MGS':labelMap[state.view]; document.getElementById('champU').textContent=r.u.toFixed(1); document.getElementById('champA').textContent=r.a.toFixed(1); document.getElementById('champF').textContent=r.f.toFixed(1); }
+    function render(){ const ranked=rankedRows(); const rankMap=new Map(ranked.map((r,i)=>[r.id,i+1])); renderPodium(ranked.slice(0,3)); updateChampion(ranked[0]); const trs=tableRows().map(r=>{ const rank=rankMap.get(r.id); return `<tr><td><span class="rank-box ${rankClass(rank-1)}">${rank}</span></td><td class="method-cell"><b>${r.method}</b><span>${r.family}</span></td><td>${tagBackbone(r.backbone)}</td><td><span class="tag domain">${r.domain}</span></td><td>${metric(r.u,'good')}</td><td>${metric(r.a,'risk')}</td><td>${metric(r.f,'risk')}</td><td>${metric(r.mgs,'good',65)}</td></tr>`; }).join(''); document.getElementById('leaderboardBody').innerHTML=trs; document.getElementById('rowCount').textContent=`Showing ${tableRows().length} of ${rows.length} rows · Domain: ${state.domain}`; }
+
+    document.querySelectorAll('.view').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.view').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.view=btn.dataset.view; const [k,d]=sortForView(state.view); state.sortKey=k; state.sortDir=d; render(); }));
+    document.querySelectorAll('.domain-tab').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.domain-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.domain=btn.dataset.domain; render(); }));
+    document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.sort; if(state.sortKey===k) state.sortDir=state.sortDir==='asc'?'desc':'asc'; else { state.sortKey=k; state.sortDir=(k==='a'||k==='f')?'asc':'desc'; } render(); }));
+    document.getElementById('searchInput').addEventListener('input',e=>{ state.query=e.target.value; render(); });
+    document.getElementById('backboneFilter').addEventListener('change',e=>{ state.backbone=e.target.value; render(); });
+    document.getElementById('familyFilter').addEventListener('change',e=>{ state.family=e.target.value; render(); });
+    loadLeaderboard();
+
+    const copyBibBtn = document.getElementById('copyBibBtn');
+    const bibtexCode = document.getElementById('bibtexCode');
+    if (copyBibBtn && bibtexCode) {
+      copyBibBtn.addEventListener('click', async () => {
+        const text = bibtexCode.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          copyBibBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBibBtn.textContent = 'Copy'; }, 1400);
+        } catch (err) {
+          const range = document.createRange();
+          range.selectNodeContents(bibtexCode);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          copyBibBtn.textContent = 'Selected';
+          setTimeout(() => { copyBibBtn.textContent = 'Copy'; }, 1400);
+        }
+      });
+    }
+  
+  </script>
+</body>
+</html>

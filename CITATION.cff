@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+title: "GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents"
+message: "If you use GateMem, please cite the accompanying paper."
+type: dataset
+abstract: "GateMem is a synthetic benchmark for evaluating utility, access control, and active forgetting in multi-principal shared-memory agents."
+keywords:
+  - agent memory
+  - memory governance
+  - access control
+  - active forgetting
+  - benchmark
+license: CC-BY-4.0
+authors:
+  - family-names: "Ren"
+    given-names: "Zhe"
+    affiliation: "School of Artificial Intelligence, Jilin University"
+    email: "renzhe25@mails.jlu.edu.cn"
+  - family-names: "Yang"
+    given-names: "Yibo"
+    affiliation: "King Abdullah University of Science and Technology (KAUST)"
+    email: "yibo.yang93@gmail.com"
+  - family-names: "Chen"
+    given-names: "Yimeng"
+    affiliation: "King Abdullah University of Science and Technology (KAUST)"
+    email: "yimeng.chen@kaust.edu.sa"
+  - family-names: "Zhao"
+    given-names: "Zijun"
+    affiliation: "School of Artificial Intelligence, Jilin University"
+  - family-names: "Fu"
+    given-names: "Benshuo"
+    affiliation: "School of Artificial Intelligence, Jilin University"
+  - family-names: "Shu"
+    given-names: "Zhihao"
+    affiliation: "School of Artificial Intelligence, Jilin University"
+  - family-names: "Zhang"
+    given-names: "Bingjie"
+    affiliation: "School of Artificial Intelligence, Jilin University"
+  - family-names: "Guo"
+    given-names: "Dandan"
+    affiliation: "School of Artificial Intelligence, Jilin University; King Abdullah University of Science and Technology (KAUST)"
+    email: "guodandan@jlu.edu.cn"
+contact:
+  - family-names: "Guo"
+    given-names: "Dandan"
+    affiliation: "School of Artificial Intelligence, Jilin University; King Abdullah University of Science and Technology (KAUST)"
+    email: "guodandan@jlu.edu.cn"

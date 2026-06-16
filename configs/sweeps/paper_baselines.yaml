@@ -1,0 +1,55 @@
+# Convenience sweep for the most common small reproduction target:
+# medical + GPT-4o-mini + all 7 baselines.
+# For arbitrary domain/model/baseline combinations, use paper_matrix.yaml with filters.
+
+base_config: configs/runs/paper_main.yaml
+out_dir: outputs
+max_parallel_runs: 1
+run_name_template: "{domain}_{model_key}_{agent_key}"
+
+common_overrides:
+  max_output_tokens: 4096
+  use_llm_judge: true
+  judge_provider: openai
+  judge_model: gpt-4o
+  judge_max_output_tokens: 4096
+  judge_concurrency: 4
+  embed_provider: openai
+  embed_model: text-embedding-3-small
+  embed_device: cpu
+  top_k: 20
+  show_ingest_progress: true
+
+domains:
+  medical: bench/data/medical
+
+models:
+  gpt4omini:
+    llm_provider: openai
+    llm_model: gpt-4o-mini
+    temperature: 0.2
+
+baselines:
+  long_context:
+    agent: long_context
+
+  rag_naive:
+    agent: rag_naive
+
+  rag_policy:
+    agent: rag_policy
+
+  a_mem:
+    agent: a_mem
+
+  mem0:
+    agent: mem0
+    mem0_backend: upstream
+
+  remem_i:
+    agent: remem
+    remem_variant: iterative
+
+  remem_s:
+    agent: remem
+    remem_variant: single

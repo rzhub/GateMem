@@ -1,0 +1,30 @@
+# Fast smoke-test sweep. Uses the deterministic stub model and a small example domain.
+
+base_config: configs/runs/paper_main.yaml
+out_dir: outputs
+max_parallel_runs: 1
+run_name_template: "smoke_{domain}_{agent_key}"
+
+common_overrides:
+  llm_provider: stub
+  llm_model: stub
+  use_llm_judge: false
+  episode_concurrency: 1
+  judge_concurrency: 1
+  top_k: 5
+
+domains:
+  medical_small: bench/data/medical-1
+
+models:
+  stub:
+    llm_provider: stub
+    llm_model: stub
+
+baselines:
+  long_context:
+    agent: long_context
+  rag_naive:
+    agent: rag_naive
+  rag_policy:
+    agent: rag_policy

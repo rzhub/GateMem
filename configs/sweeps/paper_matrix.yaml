@@ -1,0 +1,93 @@
+# Full GateMem paper-style experiment matrix.
+# By default, this expands to 4 domains x 7 backbones x 7 baselines = 196 runs.
+# Use command-line filters to run any subset, for example:
+#   python scripts/sweep.py --config configs/sweeps/paper_matrix.yaml --domains medical --models gpt4omini --dry_run
+#   python scripts/sweep.py --config configs/sweeps/paper_matrix.yaml --domains office --models gemini_flash_lite --baselines rag_naive rag_policy
+
+base_config: configs/runs/paper_main.yaml
+out_dir: outputs
+max_parallel_runs: 1
+run_name_template: "{domain}_{model_key}_{agent_key}"
+
+# Shared overrides applied to every expanded run.
+common_overrides:
+  max_output_tokens: 4096
+  use_llm_judge: true
+  judge_provider: openai
+  judge_model: gpt-4o
+  judge_max_output_tokens: 4096
+  judge_concurrency: 4
+  embed_provider: openai
+  embed_model: text-embedding-3-small
+  embed_device: cpu
+  top_k: 20
+  show_ingest_progress: true
+
+domains:
+  medical: bench/data/medical
+  office: bench/data/office
+  education: bench/data/education
+  household: bench/data/household
+
+models:
+  gpt4omini:
+    llm_provider: openai
+    llm_model: gpt-4o-mini
+    temperature: 0.2
+
+  gpt5mini:
+    llm_provider: openai
+    llm_model: gpt-5-mini
+    reasoning_effort: low
+    text_verbosity: low
+
+  gemini_flash_lite:
+    llm_provider: gemini
+    llm_model: gemini-2.5-flash-lite
+    temperature: 0.2
+
+  deepseek_v4_pro:
+    llm_provider: deepseek
+    llm_model: deepseek-v4-pro
+    temperature: 0.2
+
+  llama4_maverick:
+    llm_provider: llama
+    llm_model: meta/llama-4-maverick-17b-128e-instruct
+    temperature: 0.2
+
+  gpt54:
+    llm_provider: openai
+    llm_model: gpt-5.4
+    reasoning_effort: none
+    text_verbosity: low
+
+  gemini_pro:
+    llm_provider: gemini
+    llm_model: gemini-2.5-pro
+    temperature: 0.2
+
+baselines:
+  long_context:
+    agent: long_context
+
+  rag_naive:
+    agent: rag_naive
+
+  rag_policy:
+    agent: rag_policy
+
+  a_mem:
+    agent: a_mem
+
+  mem0:
+    agent: mem0
+    mem0_backend: upstream
+
+  remem_i:
+    agent: remem
+    remem_variant: iterative
+
+  remem_s:
+    agent: remem
+    remem_variant: single
