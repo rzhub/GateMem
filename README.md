@@ -196,7 +196,7 @@ For full benchmark usage, see [`bench/README.md`](bench/README.md).
 GateMem provides an **online submission interface** for evaluating new methods and updating the public leaderboard.
 
 **Submit results:** 👉 [GateMem-Submit](https://huggingface.co/spaces/Ray368/GateMem-Submit)  
-**View leaderboard:** 🌐 [GateMem Project Page](https://rzhub.github.io/GateMem/)
+**View leaderboard:** 🏆 [GateMem Leaderboard](https://rzhub.github.io/GateMem/) 
 
 ### Workflow
 
