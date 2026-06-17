@@ -14,10 +14,11 @@
 
 <p align="center">
   <a href="https://arxiv.org/abs/xxxx.xxxxx">📄 Paper</a> •
-  <a href="https://huggingface.co/datasets/your-org/GateMem">🤗 Hugging Face Dataset</a> •
+  <a href="https://huggingface.co/datasets/Ray368/GateMem">🤗 Hugging Face Dataset</a> •
   <a href="./bench/README.md">🧪 Benchmark Toolkit</a> •
   <a href="./DATASET_CARD.md">🗂 Dataset Card</a> •
-  <a href="https://rzhub.github.io/GateMem/">🌐 Project Page</a>
+  <a href="https://rzhub.github.io/GateMem/">🏆 Leaderboard</a> •
+  <a href="https://rzhub.github.io/GateMem/project.html">🌐 Project Page</a>
 </p>
 
 <p align="center">
@@ -25,7 +26,7 @@
   <img src="https://img.shields.io/badge/Domains-4-blue" />
   <img src="https://img.shields.io/badge/Episodes-91-success" />
   <img src="https://img.shields.io/badge/Checkpoints-2218-orange" />
-  <img src="https://img.shields.io/badge/License-Apache--2.0-green" />
+  <img src="https://img.shields.io/badge/License-MIT-green" />
 </p>
 
 ---
