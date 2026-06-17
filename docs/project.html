@@ -242,28 +242,131 @@
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(circle at 50% 45%, rgba(31,95,80,.13), transparent 34%),
-        linear-gradient(180deg, rgba(255,253,248,.95), rgba(244,239,230,.88));
+        radial-gradient(circle at 50% 48%, rgba(31,95,80,.18), transparent 34%),
+        radial-gradient(circle at 18% 18%, rgba(35,79,126,.10), transparent 28%),
+        radial-gradient(circle at 82% 82%, rgba(169,111,29,.12), transparent 30%),
+        linear-gradient(180deg, rgba(255,253,248,.96), rgba(244,239,230,.88));
     }
-    .bank {
-      position:absolute; inset: 74px 60px 88px;
-      border:1px solid var(--line-2);
-      background: rgba(255,253,248,.8);
-      display:grid; place-items:center; text-align:center;
-      box-shadow: inset 0 0 0 10px rgba(244,239,230,.46);
+    .memory-orbit {
+      position: absolute;
+      inset: 24px;
+      border: 1px solid rgba(191,178,160,.48);
+      background:
+        linear-gradient(115deg, rgba(255,253,248,.72), rgba(255,253,248,.22)),
+        radial-gradient(circle at 50% 50%, rgba(255,253,248,.96), rgba(244,239,230,.55));
+      box-shadow: inset 0 0 0 9px rgba(255,253,248,.38), 0 18px 42px rgba(62,52,38,.08);
     }
-    .bank b { display:block; font-family:var(--serif); font-size:30px; letter-spacing:-.05em; }
-    .bank span { color:var(--muted); font-size:12px; font-family:var(--mono); text-transform:uppercase; letter-spacing:.08em; }
-    .node { position:absolute; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; border:1px solid var(--line-2); background:#fffdf8; font-weight:900; box-shadow:0 10px 26px rgba(62,52,38,.10); }
-    .node.n1 { top:42px; left:44px; color:var(--green); }
-    .node.n2 { top:44px; right:52px; color:var(--blue); }
-    .node.n3 { bottom:42px; left:70px; color:var(--gold); }
-    .node.n4 { bottom:48px; right:58px; color:var(--red); }
-    .trace { position:absolute; height:1px; background:var(--line-2); transform-origin:left; opacity:.72; }
-    .trace.t1 { top:68px; left:88px; width:130px; transform:rotate(18deg); }
-    .trace.t2 { top:74px; right:98px; width:110px; transform:rotate(160deg); }
-    .trace.t3 { bottom:72px; left:116px; width:112px; transform:rotate(-22deg); }
-    .trace.t4 { bottom:74px; right:104px; width:116px; transform:rotate(202deg); }
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 1px dashed rgba(31,95,80,.26);
+      border-radius: 999px;
+      pointer-events: none;
+    }
+    .orbit-ring.r1 { width: 68%; height: 48%; }
+    .orbit-ring.r2 { width: 48%; height: 70%; border-color: rgba(169,111,29,.24); }
+    .memory-core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 58%;
+      min-height: 142px;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 28px 24px;
+      border: 1px solid var(--line-2);
+      background:
+        linear-gradient(180deg, rgba(255,253,248,.98), rgba(250,246,238,.95)),
+        radial-gradient(circle at 50% 0%, rgba(31,95,80,.10), transparent 60%);
+      box-shadow: 0 18px 48px rgba(62,52,38,.13), inset 0 0 0 8px rgba(244,239,230,.42);
+    }
+    .memory-core span {
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .memory-core b {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--serif);
+      font-size: 33px;
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+    .memory-core em {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-style: normal;
+      letter-spacing: .04em;
+    }
+    .principal-node {
+      position: absolute;
+      min-width: 118px;
+      padding: 10px 12px;
+      border: 1px solid var(--line-2);
+      background: #fffdf8;
+      box-shadow: 0 12px 28px rgba(62,52,38,.10);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 12px;
+      font-weight: 850;
+      color: var(--ink-2);
+    }
+    .principal-node i {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff8eb;
+      font-style: normal;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .principal-node small {
+      display: block;
+      margin-top: 1px;
+      color: var(--muted-2);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .principal-node.p1 { top: 26px; left: 28px; }
+    .principal-node.p1 i { background: var(--green); }
+    .principal-node.p2 { top: 26px; right: 28px; }
+    .principal-node.p2 i { background: var(--blue); }
+    .principal-node.p3 { bottom: 26px; left: 28px; }
+    .principal-node.p3 i { background: var(--gold); }
+    .principal-node.p4 { bottom: 26px; right: 28px; }
+    .principal-node.p4 i { background: var(--red); }
+    .flow-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 1px;
+      width: 170px;
+      background: linear-gradient(90deg, rgba(191,178,160,0), rgba(191,178,160,.72));
+      transform-origin: left center;
+      pointer-events: none;
+    }
+    .flow-line.f1 { transform: rotate(212deg); }
+    .flow-line.f2 { transform: rotate(328deg); }
+    .flow-line.f3 { transform: rotate(148deg); }
+    .flow-line.f4 { transform: rotate(32deg); }
 
     .figure-card {
       border: 1px solid var(--line);
@@ -272,6 +375,63 @@
       box-shadow: var(--shadow);
     }
     .figure-card img { display:block; width:100%; border:1px solid rgba(216,206,189,.6); background:#fffdf8; }
+    .figure-card img.zoomable {
+      cursor: zoom-in;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .figure-card img.zoomable:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-2);
+      box-shadow: 0 14px 34px rgba(62,52,38,.13);
+    }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 34px;
+      background: rgba(21,21,21,.78);
+      backdrop-filter: blur(10px);
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      width: min(1180px, 96vw);
+      max-height: 92vh;
+      display: grid;
+      gap: 10px;
+    }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 82vh;
+      margin: 0 auto;
+      display: block;
+      background: #fffdf8;
+      border: 1px solid rgba(255,250,240,.34);
+      box-shadow: 0 28px 80px rgba(0,0,0,.36);
+    }
+    .lightbox-caption {
+      margin: 0;
+      color: #fff8eb;
+      text-align: center;
+      font-size: 13px;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,250,240,.34);
+      background: rgba(255,250,240,.08);
+      color: #fff8eb;
+      font-size: 25px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .lightbox-close:hover { background: rgba(255,250,240,.16); }
     .caption { color: var(--muted); font-size: 13px; margin: 10px 6px 2px; text-align:center; }
 
     .domain-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
@@ -288,6 +448,22 @@
     .domain-card.off:after { background:var(--blue); }
     .domain-card.edu:after { background:var(--violet); }
     .domain-card.house:after { background:var(--gold); }
+    .domain-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .domain-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--paper-soft);
+      font-size: 20px;
+      box-shadow: inset 0 0 0 5px rgba(255,253,248,.68);
+    }
+    .domain-card.med .domain-icon { background: var(--green-2); }
+    .domain-card.off .domain-icon { background: var(--blue-2); }
+    .domain-card.edu .domain-icon { background: var(--violet-2); }
+    .domain-card.house .domain-icon { background: var(--gold-2); }
     .domain-card .num { color:var(--muted-2); font-family:var(--mono); font-size:11px; font-weight:850; letter-spacing:.08em; }
     .domain-card h3 { margin:10px 0 0; font-family:var(--serif); font-size:28px; letter-spacing:-.045em; }
     .domain-card p { margin:9px 0 0; color:var(--muted); font-size:14px; line-height:1.65; }
@@ -396,7 +572,7 @@
           <div class="hero-actions">
             <a class="btn primary" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Explore Code</a>
             <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Download Dataset</a>
-            <a class="btn" href="index.html">View Leaderboard</a>
+            <a class="btn" href="index.html#leaderboard">View Leaderboard</a>
             <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
           </div>
         </div>
@@ -451,14 +627,30 @@
           </div>
 
           <div class="panel memory-diagram" aria-hidden="true">
-            <span class="trace t1"></span><span class="trace t2"></span><span class="trace t3"></span><span class="trace t4"></span>
-            <span class="node n1">P</span><span class="node n2">C</span><span class="node n3">M</span><span class="node n4">G</span>
-            <div class="bank"><div><span>governed</span><b>Shared Memory Bank</b></div></div>
+            <div class="memory-orbit">
+              <span class="orbit-ring r1"></span>
+              <span class="orbit-ring r2"></span>
+              <span class="flow-line f1"></span>
+              <span class="flow-line f2"></span>
+              <span class="flow-line f3"></span>
+              <span class="flow-line f4"></span>
+              <div class="memory-core">
+                <div>
+                  <span>governed shared state</span>
+                  <b>Shared Memory Bank</b>
+                  <em>policy · provenance · deletion</em>
+                </div>
+              </div>
+              <div class="principal-node p1"><i>P</i><div>Principal<small>owner</small></div></div>
+              <div class="principal-node p2"><i>C</i><div>Clinician<small>authorized</small></div></div>
+              <div class="principal-node p3"><i>M</i><div>Manager<small>scoped</small></div></div>
+              <div class="principal-node p4"><i>G</i><div>Guest<small>restricted</small></div></div>
+            </div>
           </div>
         </div>
 
         <div class="figure-card" style="margin-top:16px;">
-          <img src="assets/fig1_overview.png" alt="Overview of GateMem" />
+          <img class="zoomable" src="assets/fig1_overview.png" alt="Overview of GateMem" />
           <div class="caption">GateMem shifts evaluation from single-principal memory recall to multi-principal shared-memory governance.</div>
         </div>
       </div>
@@ -483,15 +675,15 @@
         </div>
 
         <div class="figure-card" style="margin-top:16px;">
-          <img src="assets/fig2_pipeline.png" alt="GateMem dataset construction pipeline" />
+          <img class="zoomable" src="assets/fig2_pipeline.png" alt="GateMem dataset construction pipeline" />
           <div class="caption">Dataset construction pipeline with domain policy design, episode construction, and hidden checkpoint generation.</div>
         </div>
 
         <div class="domain-grid" style="margin-top:16px;">
-          <article class="domain-card med"><div class="num">DOMAIN 01</div><h3>Medical</h3><p>Clinical coordination, patient data, family delegation, cross-patient confusion, and protected lab or medication details.</p></article>
-          <article class="domain-card off"><div class="num">DOMAIN 02</div><h3>Office</h3><p>Project confidentiality, HR records, contractor boundaries, role mismatches, and enterprise workflows.</p></article>
-          <article class="domain-card edu"><div class="num">DOMAIN 03</div><h3>Education</h3><p>Campus workflows, student support, counselor interactions, academic records, and scoped institutional access.</p></article>
-          <article class="domain-card house"><div class="num">DOMAIN 04</div><h3>Household</h3><p>Family coordination, residents, guests, caregivers, access codes, care routines, and deleted household instructions.</p></article>
+          <article class="domain-card med"><div class="domain-top"><div class="num">DOMAIN 01</div><div class="domain-icon" aria-hidden="true">🩺</div></div><h3>Medical</h3><p>Clinical coordination, patient data, family delegation, cross-patient confusion, and protected lab or medication details.</p></article>
+          <article class="domain-card off"><div class="domain-top"><div class="num">DOMAIN 02</div><div class="domain-icon" aria-hidden="true">💼</div></div><h3>Office</h3><p>Project confidentiality, HR records, contractor boundaries, role mismatches, and enterprise workflows.</p></article>
+          <article class="domain-card edu"><div class="domain-top"><div class="num">DOMAIN 03</div><div class="domain-icon" aria-hidden="true">🎓</div></div><h3>Education</h3><p>Campus workflows, student support, counselor interactions, academic records, and scoped institutional access.</p></article>
+          <article class="domain-card house"><div class="domain-top"><div class="num">DOMAIN 04</div><div class="domain-icon" aria-hidden="true">🏠</div></div><h3>Household</h3><p>Family coordination, residents, guests, caregivers, access codes, care routines, and deleted household instructions.</p></article>
         </div>
       </div>
     </section>
@@ -520,7 +712,7 @@
           </div>
 
           <div class="figure-card" style="margin:0;">
-            <img src="assets/main_results.png" alt="GateMem main results table" />
+            <img class="zoomable" src="assets/main_results.png" alt="GateMem main results table" />
             <div class="caption">Judge-based main results across backbone LLMs and domains. The official leaderboard provides interactive domain-level views.</div>
           </div>
         </div>
@@ -551,6 +743,9 @@ python bench/scripts/run_eval.py \
   --config configs/runs/paper_main.yaml \
   --data_dir bench/data/medical \
   --agent long_context</code></pre>
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn primary" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a>
+            </div>
           </div>
 
           <div class="panel">
@@ -577,7 +772,7 @@ python bench/scripts/run_eval.py \
             <div class="eyebrow">Citation</div>
             <h2>Cite GateMem.</h2>
           </div>
-          <p>If you use GateMem, please cite the accompanying paper and dataset. Replace the entry with the arXiv or conference metadata once finalized.</p>
+          <p>If you use GateMem, please cite the accompanying paper and dataset.</p>
         </div>
 
         <div class="bib-card">
@@ -591,6 +786,14 @@ python bench/scripts/run_eval.py \
       </div>
     </section>
   </main>
+
+  <div class="lightbox" id="imageLightbox" aria-hidden="true" role="dialog" aria-label="Expanded figure">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close expanded figure">×</button>
+    <div class="lightbox-inner">
+      <img id="lightboxImage" alt="" />
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+    </div>
+  </div>
 
   <footer>
     <div class="wrap footer-row">
@@ -614,6 +817,41 @@ python bench/scripts/run_eval.py \
         }
       });
     }
+
+    const lightbox = document.getElementById('imageLightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      if (lightboxImage) lightboxImage.removeAttribute('src');
+    }
+
+    document.querySelectorAll('img.zoomable').forEach((img) => {
+      img.addEventListener('click', () => {
+        if (!lightbox || !lightboxImage) return;
+        const figure = img.closest('.figure-card');
+        const caption = figure ? figure.querySelector('.caption') : null;
+        lightboxImage.src = img.currentSrc || img.src;
+        lightboxImage.alt = img.alt || '';
+        if (lightboxCaption) lightboxCaption.textContent = caption ? caption.textContent : (img.alt || '');
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      });
+    });
+
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightbox) {
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+    }
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeLightbox();
+    });
   </script>
 </body>
 </html>
