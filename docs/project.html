@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GateMem: Benchmarking memory governance in multi-principal shared-memory agents." />
+  <title>GateMem | Project Page</title>
+
+  <!--
+    GateMem Project Page
+    Static HTML + CSS + vanilla JS. No build step required.
+    Suggested deployment: docs/project.html
+  -->
+
+  <style>
+    :root {
+      --paper: #fbfaf6;
+      --paper-soft: #f4efe6;
+      --ink: #151515;
+      --ink-2: #2b2b2b;
+      --muted: #70685c;
+      --muted-2: #938a7c;
+      --line: #d8cebd;
+      --line-2: #bfb2a0;
+      --green: #1f5f50;
+      --green-2: #dfeee7;
+      --gold: #a96f1d;
+      --gold-2: #fbf0d9;
+      --red: #9f1d35;
+      --red-2: #f6e3e7;
+      --blue: #234f7e;
+      --blue-2: #e4edf6;
+      --violet: #5b4b8a;
+      --violet-2: #eee9fa;
+      --surface: rgba(255, 253, 248, 0.86);
+      --shadow: 0 22px 58px rgba(62, 52, 38, 0.12);
+      --maxw: 1240px;
+      --serif: Georgia, Cambria, "Times New Roman", Times, serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 6%, rgba(31, 95, 80, .10), transparent 27rem),
+        radial-gradient(circle at 90% 8%, rgba(169, 111, 29, .11), transparent 27rem),
+        linear-gradient(rgba(23,23,23,.026) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,23,23,.020) 1px, transparent 1px),
+        var(--paper);
+      background-size: auto, auto, 34px 34px, 34px 34px, auto;
+      font-family: var(--sans);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+    .top-note {
+      background: var(--ink);
+      color: #fff8eb;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .top-note .wrap { min-height: 34px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .top-note span:last-child { color: #d2c7b8; }
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(251, 250, 246, .88);
+      backdrop-filter: blur(16px);
+    }
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { display: inline-flex; align-items: center; min-height: 58px; }
+    .brand-logo { display: block; height: 52px; width: auto; max-width: 240px; object-fit: contain; }
+    .brand-fallback {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: -.035em;
+    }
+    .seal {
+      width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--ink);
+      display: grid; place-items: center; background: var(--paper-soft); box-shadow: inset 0 0 0 5px var(--paper);
+      font-family: var(--serif); font-weight: 900;
+    }
+    .brand-fallback small { display:block; color:var(--muted); font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 13px; font-weight: 780; }
+    .nav-links a:hover { color: var(--ink); }
+    .actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 15px;
+      border-radius: 999px;
+      border: 1px solid var(--line-2);
+      background: rgba(255,253,248,.78);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 840;
+      cursor: pointer;
+      transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background:#fffdf8; box-shadow: 0 12px 28px rgba(62,52,38,.10); }
+    .btn.primary { background: var(--ink); color: #fff8eb; border-color: var(--ink); }
+    .btn.accent { background: #e5f0ea; color: #164c40; border-color: #b9d5ca; }
+
+    .hero { padding: 62px 0 36px; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 34px; align-items: stretch; }
+    .hero-main {
+      border-top: 3px double var(--ink);
+      border-bottom: 1px solid var(--line-2);
+      padding: 34px 0 30px;
+    }
+    .kicker {
+      display: inline-flex; align-items: center; gap: 10px; color: var(--green);
+      font-family: var(--mono); font-size: 11px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .kicker:before { content:""; display:block; width:34px; height:1px; background:var(--green); }
+    h1 {
+      margin: 22px 0 0;
+      font-family: var(--serif);
+      font-size: clamp(62px, 8.5vw, 118px);
+      line-height: .86;
+      letter-spacing: -.078em;
+      font-weight: 900;
+    }
+    .subtitle {
+      margin: 20px 0 0;
+      max-width: 880px;
+      color: var(--ink-2);
+      font-size: clamp(22px, 2.7vw, 35px);
+      line-height: 1.12;
+      letter-spacing: -.045em;
+      font-weight: 780;
+    }
+    .lead {
+      margin: 22px 0 0;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.82;
+    }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
+
+    .artifact-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      min-height: 460px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .artifact-card h2 { margin:0; font-family:var(--serif); font-size:34px; line-height:.98; letter-spacing:-.045em; }
+    .artifact-card p { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+    .triad { margin-top:22px; display:grid; gap:10px; }
+    .triad-item {
+      position: relative;
+      padding: 16px 16px 16px 54px;
+      border: 1px solid var(--line);
+      background: #fffdf8;
+    }
+    .triad-item:before {
+      position:absolute; left:16px; top:16px; width:26px; height:26px; border-radius:50%;
+      display:grid; place-items:center; color:white; font-weight:900; font-size:13px;
+    }
+    .triad-item.utility:before { content:"U"; background:var(--green); }
+    .triad-item.access:before { content:"A"; background:var(--blue); }
+    .triad-item.forget:before { content:"F"; background:var(--gold); }
+    .triad-item b { display:block; line-height:1.1; }
+    .triad-item span { display:block; color:var(--muted); font-size:12px; line-height:1.55; margin-top:5px; }
+    .score-formula {
+      margin-top: 18px;
+      border: 1px solid var(--line-2);
+      background: linear-gradient(180deg, #fffdf8, #f7f0e5);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+    .score-formula b { color: var(--green); }
+
+    .stats { padding: 28px 0 26px; }
+    .stats-grid { display:grid; grid-template-columns: repeat(5, 1fr); border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+    .stat { padding:18px 20px; border-right:1px solid var(--line); background:rgba(255,253,248,.54); }
+    .stat:last-child { border-right:0; }
+    .stat b { display:block; font-family:var(--serif); font-size:38px; line-height:1; letter-spacing:-.055em; }
+    .stat span { display:block; margin-top:6px; color:var(--muted); font-size:12px; font-weight:760; }
+
+    section.block { padding: 56px 0; }
+    .section-head { display:grid; grid-template-columns: .64fr 1fr; gap: 28px; align-items:end; margin-bottom:24px; }
+    .section-head .eyebrow { color:var(--green); font-family:var(--mono); font-size:11px; font-weight:850; letter-spacing:.12em; text-transform:uppercase; }
+    .section-head h2 { margin:10px 0 0; font-family:var(--serif); font-size: clamp(38px, 5vw, 72px); line-height:.92; letter-spacing:-.072em; }
+    .section-head p { margin:0; color:var(--muted); font-size:16px; line-height:1.8; }
+
+    .concept-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; }
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255,253,248,.82);
+      box-shadow: 0 14px 42px rgba(62,52,38,.07);
+      padding: 24px;
+    }
+    .panel h3 { margin:0; font-family:var(--serif); font-size:30px; line-height:1; letter-spacing:-.045em; }
+    .panel p { color:var(--muted); margin:12px 0 0; }
+    .principle-list { display:grid; gap:10px; margin-top:18px; }
+    .principle {
+      display:grid; grid-template-columns: 34px 1fr; gap:12px; align-items:start;
+      border-top:1px solid var(--line); padding-top:13px;
+    }
+    .principle i { width:32px; height:32px; display:grid; place-items:center; border-radius:50%; font-style:normal; font-weight:900; color:#fff8eb; }
+    .principle:nth-child(1) i { background:var(--green); }
+    .principle:nth-child(2) i { background:var(--blue); }
+    .principle:nth-child(3) i { background:var(--gold); }
+    .principle b { display:block; }
+    .principle span { display:block; color:var(--muted); font-size:13px; margin-top:3px; }
+
+    .memory-diagram {
+      height: 100%;
+      min-height: 365px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(31,95,80,.13), transparent 34%),
+        linear-gradient(180deg, rgba(255,253,248,.95), rgba(244,239,230,.88));
+    }
+    .bank {
+      position:absolute; inset: 74px 60px 88px;
+      border:1px solid var(--line-2);
+      background: rgba(255,253,248,.8);
+      display:grid; place-items:center; text-align:center;
+      box-shadow: inset 0 0 0 10px rgba(244,239,230,.46);
+    }
+    .bank b { display:block; font-family:var(--serif); font-size:30px; letter-spacing:-.05em; }
+    .bank span { color:var(--muted); font-size:12px; font-family:var(--mono); text-transform:uppercase; letter-spacing:.08em; }
+    .node { position:absolute; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; border:1px solid var(--line-2); background:#fffdf8; font-weight:900; box-shadow:0 10px 26px rgba(62,52,38,.10); }
+    .node.n1 { top:42px; left:44px; color:var(--green); }
+    .node.n2 { top:44px; right:52px; color:var(--blue); }
+    .node.n3 { bottom:42px; left:70px; color:var(--gold); }
+    .node.n4 { bottom:48px; right:58px; color:var(--red); }
+    .trace { position:absolute; height:1px; background:var(--line-2); transform-origin:left; opacity:.72; }
+    .trace.t1 { top:68px; left:88px; width:130px; transform:rotate(18deg); }
+    .trace.t2 { top:74px; right:98px; width:110px; transform:rotate(160deg); }
+    .trace.t3 { bottom:72px; left:116px; width:112px; transform:rotate(-22deg); }
+    .trace.t4 { bottom:74px; right:104px; width:116px; transform:rotate(202deg); }
+
+    .figure-card {
+      border: 1px solid var(--line);
+      background: rgba(255,253,248,.86);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .figure-card img { display:block; width:100%; border:1px solid rgba(216,206,189,.6); background:#fffdf8; }
+    .caption { color: var(--muted); font-size: 13px; margin: 10px 6px 2px; text-align:center; }
+
+    .domain-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
+    .domain-card {
+      border:1px solid var(--line);
+      background:#fffdf8;
+      padding:20px;
+      min-height:190px;
+      position:relative;
+      overflow:hidden;
+    }
+    .domain-card:after { content:""; position:absolute; right:-30px; bottom:-30px; width:100px; height:100px; border-radius:50%; opacity:.18; }
+    .domain-card.med:after { background:var(--green); }
+    .domain-card.off:after { background:var(--blue); }
+    .domain-card.edu:after { background:var(--violet); }
+    .domain-card.house:after { background:var(--gold); }
+    .domain-card .num { color:var(--muted-2); font-family:var(--mono); font-size:11px; font-weight:850; letter-spacing:.08em; }
+    .domain-card h3 { margin:10px 0 0; font-family:var(--serif); font-size:28px; letter-spacing:-.045em; }
+    .domain-card p { margin:9px 0 0; color:var(--muted); font-size:14px; line-height:1.65; }
+
+    .pipeline { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:16px; }
+    .step { border:1px solid var(--line); background:#fffdf8; padding:20px; position:relative; }
+    .step .index { color:var(--gold); font-family:var(--mono); font-size:11px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; }
+    .step h3 { margin:9px 0 0; font-size:20px; letter-spacing:-.03em; }
+    .step p { margin:8px 0 0; color:var(--muted); font-size:14px; }
+
+    .results-grid { display:grid; grid-template-columns: .95fr 1.05fr; gap:16px; align-items:stretch; }
+    .findings { display:grid; gap:10px; }
+    .finding { border:1px solid var(--line); background:#fffdf8; padding:18px; }
+    .finding b { display:block; font-size:16px; }
+    .finding span { display:block; margin-top:5px; color:var(--muted); font-size:14px; }
+    .result-callout { margin-top:12px; padding:18px; border:1px solid var(--line-2); background:linear-gradient(180deg, #fffdf8, #f7f0e5); }
+    .result-callout b { display:block; font-family:var(--serif); font-size:28px; letter-spacing:-.045em; }
+    .result-callout span { display:block; color:var(--muted); margin-top:6px; }
+
+    .use-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    pre {
+      margin: 14px 0 0;
+      overflow-x:auto;
+      border:1px solid rgba(255,250,240,.12);
+      background:#151515;
+      color:#f8efe2;
+      padding:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.7;
+    }
+    .bib-card { position:relative; border:1px solid var(--line); background:#fffdf8; box-shadow:var(--shadow); padding:22px; }
+    .copy-btn {
+      position:absolute; right:14px; top:14px;
+      min-height:32px; padding:0 11px; border:1px solid rgba(255,250,240,.28);
+      background:rgba(255,250,240,.08); color:#fff8eb; font-family:var(--mono); font-size:11px; font-weight:850; letter-spacing:.05em; text-transform:uppercase; cursor:pointer;
+    }
+    .copy-btn:hover { background:rgba(255,250,240,.16); }
+
+    footer { border-top:1px solid var(--line); padding:32px 0; color:var(--muted); background:rgba(255,253,248,.66); }
+    .footer-row { display:flex; justify-content:space-between; gap:18px; align-items:center; font-size:13px; }
+    .footer-row nav { display:flex; gap:18px; font-weight:760; }
+
+    @media (max-width: 1080px) {
+      .nav-links { display:none; }
+      .hero-grid, .concept-grid, .results-grid, .use-grid { grid-template-columns:1fr; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .domain-grid, .pipeline { grid-template-columns: repeat(2,1fr); }
+      .artifact-card { min-height:auto; }
+      .section-head { grid-template-columns:1fr; }
+    }
+    @media (max-width: 700px) {
+      .wrap { padding:0 18px; }
+      .actions { display:none; }
+      .hero { padding-top:38px; }
+      h1 { font-size:58px; }
+      .subtitle { font-size:23px; }
+      .stats-grid, .domain-grid, .pipeline { grid-template-columns:1fr; }
+      .stat { border-right:0; border-bottom:1px solid var(--line); }
+      .stat:last-child { border-bottom:0; }
+      .brand-logo { height:44px; max-width:210px; }
+      .footer-row { flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-note">
+    <div class="wrap">
+      <span>GateMem Project Page</span>
+      <span>Utility · Access Control · Active Forgetting</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="GateMem project page home">
+        <img class="brand-logo" src="assets/gm_logo.svg" alt="GateMem" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <span class="brand-fallback"><span class="seal">G</span><span>GATEMEM<small>Project Page</small></span></span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#results">Results</a>
+        <a href="#use">Use</a>
+        <a href="#citation">Citation</a>
+      </nav>
+      <div class="actions">
+        <a class="btn" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a>
+        <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Dataset</a>
+        <a class="btn primary" href="index.html#leaderboard">Leaderboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-main">
+          <div class="kicker">Shared-memory governance benchmark</div>
+          <h1>GateMem</h1>
+          <p class="subtitle">Benchmarking memory governance in multi-principal shared-memory agents.</p>
+          <p class="lead">
+            GateMem evaluates whether persistent memory agents can remain useful while enforcing requester-specific access boundaries and honoring deletion requests. It shifts memory evaluation from single-user recall toward governed shared memory in realistic institutional environments.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Explore Code</a>
+            <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Download Dataset</a>
+            <a class="btn" href="index.html#leaderboard">View Leaderboard</a>
+            <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
+          </div>
+        </div>
+
+        <aside class="artifact-card" aria-label="GateMem evaluation pillars">
+          <div>
+            <h2>Memory is no longer just recall.</h2>
+            <p>In shared environments, the same memory bank is queried by different principals under different roles, scopes, and relationships.</p>
+            <div class="triad">
+              <div class="triad-item utility"><b>Utility</b><span>Authorized requesters should receive useful, current, in-scope answers.</span></div>
+              <div class="triad-item access"><b>Access Control</b><span>Unauthorized or over-scoped requesters should not receive protected information.</span></div>
+              <div class="triad-item forget"><b>Active Forgetting</b><span>Deleted information should not be recovered, confirmed, or reconstructed.</span></div>
+            </div>
+            <div class="score-formula"><b>MGS</b> = U · (1 − A) · (1 − F)</div>
+          </div>
+          <p>Higher is better for U and MGS; lower is better for A and F.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="GateMem statistics">
+      <div class="wrap stats-grid">
+        <div class="stat"><b>91</b><span>long-form episodes</span></div>
+        <div class="stat"><b>2,218</b><span>hidden checkpoints</span></div>
+        <div class="stat"><b>4</b><span>institutional domains</span></div>
+        <div class="stat"><b>6</b><span>backbone LLMs</span></div>
+        <div class="stat"><b>7</b><span>memory baselines</span></div>
+      </div>
+    </section>
+
+    <section class="block" id="overview">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Overview</div>
+            <h2>From remembering information to governing shared memory.</h2>
+          </div>
+          <p>
+            Conventional memory benchmarks often reward an agent for retrieving the right fact. GateMem asks a harder deployment question: whether the agent should reveal that fact to the current requester, and whether deleted information remains recoverable later.
+          </p>
+        </div>
+
+        <div class="concept-grid">
+          <div class="panel">
+            <h3>What GateMem measures</h3>
+            <p>GateMem treats persistent memory as a governed shared state rather than a private cache. The benchmark evaluates long-horizon usefulness, contextual authorization, and interface-level deletion compliance in one protocol.</p>
+            <div class="principle-list">
+              <div class="principle"><i>1</i><div><b>Requester-specific memory use</b><span>The same fact may be safe for one principal and protected from another.</span></div></div>
+              <div class="principle"><i>2</i><div><b>Policy-aware boundary decisions</b><span>Agents must handle roles, relationships, delegated access, and plausible overreach.</span></div></div>
+              <div class="principle"><i>3</i><div><b>Post-deletion non-recovery</b><span>Deletion is evaluated through later interaction behavior, including confirmation and reconstruction attacks.</span></div></div>
+            </div>
+          </div>
+
+          <div class="panel memory-diagram" aria-hidden="true">
+            <span class="trace t1"></span><span class="trace t2"></span><span class="trace t3"></span><span class="trace t4"></span>
+            <span class="node n1">P</span><span class="node n2">C</span><span class="node n3">M</span><span class="node n4">G</span>
+            <div class="bank"><div><span>governed</span><b>Shared Memory Bank</b></div></div>
+          </div>
+        </div>
+
+        <div class="figure-card" style="margin-top:16px;">
+          <img src="assets/fig1_overview.png" alt="Overview of GateMem" />
+          <div class="caption">GateMem shifts evaluation from single-principal memory recall to multi-principal shared-memory governance.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="benchmark">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Benchmark</div>
+            <h2>Long-form episodes with hidden governance checkpoints.</h2>
+          </div>
+          <p>
+            Each episode instantiates principals, relationships, access rules, evolving facts, and deletion requests. Hidden checkpoints query the agent at selected turn boundaries and are judged using structured annotations and leak targets.
+          </p>
+        </div>
+
+        <div class="pipeline">
+          <article class="step"><div class="index">Stage 01</div><h3>Scenario design</h3><p>Define domain, principals, roles, relationships, and scoped access rules.</p></article>
+          <article class="step"><div class="index">Stage 02</div><h3>Episode construction</h3><p>Generate long-form multi-party traces with updates, benign noise, and deletion events.</p></article>
+          <article class="step"><div class="index">Stage 03</div><h3>Checkpoint evaluation</h3><p>Insert hidden utility, access-control, and active-forgetting queries with judge specifications.</p></article>
+        </div>
+
+        <div class="figure-card" style="margin-top:16px;">
+          <img src="assets/fig2_pipeline.png" alt="GateMem dataset construction pipeline" />
+          <div class="caption">Dataset construction pipeline with domain policy design, episode construction, and hidden checkpoint generation.</div>
+        </div>
+
+        <div class="domain-grid" style="margin-top:16px;">
+          <article class="domain-card med"><div class="num">DOMAIN 01</div><h3>Medical</h3><p>Clinical coordination, patient data, family delegation, cross-patient confusion, and protected lab or medication details.</p></article>
+          <article class="domain-card off"><div class="num">DOMAIN 02</div><h3>Office</h3><p>Project confidentiality, HR records, contractor boundaries, role mismatches, and enterprise workflows.</p></article>
+          <article class="domain-card edu"><div class="num">DOMAIN 03</div><h3>Education</h3><p>Campus workflows, student support, counselor interactions, academic records, and scoped institutional access.</p></article>
+          <article class="domain-card house"><div class="num">DOMAIN 04</div><h3>Household</h3><p>Family coordination, residents, guests, caregivers, access codes, care routines, and deleted household instructions.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="results">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Results</div>
+            <h2>Current memory systems are useful, but not yet governed.</h2>
+          </div>
+          <p>
+            Across backbone LLMs and memory architectures, no method simultaneously achieves strong utility, robust access control, and reliable active forgetting. High recall often comes with leakage risk.
+          </p>
+        </div>
+
+        <div class="results-grid">
+          <div class="panel">
+            <h3>Key findings</h3>
+            <div class="findings" style="margin-top:16px;">
+              <div class="finding"><b>Long-context prompting is strong but costly.</b><span>Full history provides maximal evidence for authorized queries but still exposes protected or deleted information.</span></div>
+              <div class="finding"><b>Policy-aware retrieval improves safety.</b><span>Requester and access-policy metadata reduce leakage, but often trade off utility through missing evidence or over-refusal.</span></div>
+              <div class="finding"><b>External memory is not governance by default.</b><span>Structured memory systems still need explicit authorization and deletion-aware controls.</span></div>
+            </div>
+            <div class="result-callout"><b>Leaderboard available</b><span>Compare methods by domain and by MGS, Utility, Access Safety, and Forgetting Safety.</span><div style="margin-top:14px;"><a class="btn primary" href="index.html#leaderboard">Open Leaderboard</a></div></div>
+          </div>
+
+          <div class="figure-card" style="margin:0;">
+            <img src="assets/table3_main_results.png" alt="GateMem main results table" />
+            <div class="caption">Judge-based main results across backbone LLMs and domains. The official leaderboard provides interactive domain-level views.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="use">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Use GateMem</div>
+            <h2>Run locally or submit online.</h2>
+          </div>
+          <p>
+            GateMem supports local evaluation through the released codebase and online leaderboard submission through the Hugging Face submission interface.
+          </p>
+        </div>
+
+        <div class="use-grid">
+          <div class="panel">
+            <h3>Local evaluation</h3>
+            <p>Implement a memory agent or score a generated <code>predictions.jsonl</code> file with the official evaluator.</p>
+<pre><code>git clone https://github.com/rzhub/GateMem.git
+cd GateMem
+pip install -r requirements.txt
+
+python bench/scripts/run_eval.py \
+  --config configs/runs/paper_main.yaml \
+  --data_dir bench/data/medical \
+  --agent long_context</code></pre>
+          </div>
+
+          <div class="panel">
+            <h3>Online submission</h3>
+            <p>Upload <code>predictions.jsonl</code>, fill method metadata, and submit results for maintainer review.</p>
+<pre><code>1. Generate predictions.jsonl
+2. Open GateMem-Submit
+3. Upload predictions
+4. Review pending result
+5. Update public leaderboard</code></pre>
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
+              <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Dataset</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="citation">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Citation</div>
+            <h2>Cite GateMem.</h2>
+          </div>
+          <p>If you use GateMem, please cite the accompanying paper and dataset. Replace the entry with the arXiv or conference metadata once finalized.</p>
+        </div>
+
+        <div class="bib-card">
+          <button class="copy-btn" id="copyBib" type="button">Copy</button>
+<pre id="bibtexCode">@article{gatemem2026,
+  title  = {GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents},
+  author = {Ren, Zhe and Yang, Yibo and Chen, Yimeng and Zhao, Zijun and Fu, Benshuo and Shu, Zhihao and Zhang, Bingjie and Xu, Yangyang and Guo, Dandan and Yan, Shuicheng},
+  year   = {2026}
+}</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div>© 2026 GateMem · Memory Governance Benchmark.</div>
+      <nav><a href="#top">Top</a><a href="index.html#leaderboard">Leaderboard</a><a href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a><a href="mailto:guodandan@jlu.edu.cn">Contact</a></nav>
+    </div>
+  </footer>
+
+  <script>
+    const copyBtn = document.getElementById('copyBib');
+    const bib = document.getElementById('bibtexCode');
+    if (copyBtn && bib) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(bib.textContent.trim());
+          copyBtn.textContent = 'Copied';
+          setTimeout(() => copyBtn.textContent = 'Copy', 1400);
+        } catch (e) {
+          copyBtn.textContent = 'Failed';
+          setTimeout(() => copyBtn.textContent = 'Copy', 1400);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
