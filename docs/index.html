@@ -498,6 +498,8 @@
     .tag.gpt5 { color: #523f81; background: #f1edfb; border-color: #d7ccef; }
     .tag.gpt4 { color: #234f7e; background: #edf4fb; border-color: #c9d9eb; }
     .tag.gemini { color: #176c4d; background: #eaf3ef; border-color: #c5ded2; }
+    .tag.deepseek { color: #4b3f8f; background: #f0eefb; border-color: #d6d0ef; }
+    .tag.llama { color: #8a4f14; background: #fbefe2; border-color: #e7c9a6; }
     .tag.domain { color: var(--muted); }
     .metric {
       display: inline-flex;
@@ -739,12 +741,12 @@
             <div class="champion-box">
               <div class="rank" id="champRank">#1 Overall MGS</div>
               <h3 id="champMethod">Long-Context</h3>
-              <div class="meta" id="champMeta">GPT-5-mini · Medical</div>
-              <div class="champion-score"><strong id="champScore">54.8</strong><span id="champLabel">MGS</span></div>
+              <div class="meta" id="champMeta">GPT-5.4 · Medical</div>
+              <div class="champion-score"><strong id="champScore">80.1</strong><span id="champLabel">MGS</span></div>
               <div class="champion-metrics">
-                <div><b id="champU">85.7</b>U ↑</div>
-                <div><b id="champA">19.8</b>A ↓</div>
-                <div><b id="champF">20.3</b>F ↓</div>
+                <div><b id="champU">91.4</b>U ↑</div>
+                <div><b id="champA">10.4</b>A ↓</div>
+                <div><b id="champF">2.3</b>F ↓</div>
               </div>
             </div>
           </div>
@@ -758,7 +760,7 @@
         <div class="stat"><b>91</b><span>long-form episodes</span></div>
         <div class="stat"><b>2,218</b><span>hidden checkpoints</span></div>
         <div class="stat"><b>4</b><span>domains</span></div>
-        <div class="stat"><b>84</b><span>baseline result rows</span></div>
+        <div class="stat"><b>168</b><span>baseline result rows</span></div>
         <div class="stat"><b>MGS</b><span>primary governance score</span></div>
       </div>
     </section>
@@ -798,6 +800,9 @@
               <input class="control" id="searchInput" placeholder="Search method, backbone, or family..." />
               <select class="control" id="backboneFilter">
                 <option value="all">All backbones</option>
+                <option value="GPT-5.4">GPT-5.4</option>
+                <option value="Deepseek-V4-Pro">Deepseek-V4-Pro</option>
+                <option value="Llama-4-Maverick">Llama-4-Maverick</option>
                 <option value="GPT-5-mini">GPT-5-mini</option>
                 <option value="GPT-4o-mini">GPT-4o-mini</option>
                 <option value="Gemini-2.5-Flash-Lite">Gemini-2.5-Flash-Lite</option>
@@ -957,12 +962,20 @@
     function rankedRows(){ return [...filteredRows()].sort((a,b)=>rankValue(b)-rankValue(a)); }
     function tableRows(){ const data=[...filteredRows()], k=state.sortKey; data.sort((a,b)=>{ let av=a[k], bv=b[k]; if(typeof av==='string') return state.sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av); return state.sortDir==='asc'?av-bv:bv-av; }); return data; }
     function rankClass(i){ return i===0?'top1':i===1?'top2':i===2?'top3':''; }
-    function tagBackbone(b){ const c=b.includes('GPT-5')?'gpt5':b.includes('GPT-4o')?'gpt4':'gemini'; return `<span class="tag ${c}">${b}</span>`; }
+    function tagBackbone(b){
+      let c = 'gemini';
+      if (b.includes('GPT-5')) c = 'gpt5';
+      else if (b.includes('GPT-4o')) c = 'gpt4';
+      else if (b.includes('Deepseek') || b.includes('DeepSeek')) c = 'deepseek';
+      else if (b.includes('Llama')) c = 'llama';
+      else if (b.includes('Gemini')) c = 'gemini';
+      return `<span class="tag ${c}">${b}</span>`;
+    }
     function metric(v, kind, max=100){ const w=Math.max(3, Math.min(100, v/max*100)); return `<span class="metric"><span class="bar ${kind}"><i style="width:${w}%"></i></span>${v.toFixed(1)}</span>`; }
     function status(r){ if(r.mgs>=50&&r.a<=25&&r.f<=15) return '<span class="status strong">strong</span>'; if(r.mgs>=25||r.safety>=70) return '<span class="status mixed">mixed</span>'; return '<span class="status weak">brittle</span>'; }
     function renderPodium(top){ const podium=document.getElementById('podium'); if(!top.length){ podium.innerHTML='<article class="podium-card first"><div class="medal">No entries</div><h3>No matching rows</h3><p>Adjust filters or domain selection.</p><div class="podium-score">—</div></article>'; return; } const order=[top[1],top[0],top[2]].filter(Boolean), cls=['second','first','third'], med=['second','first','third']; podium.innerHTML=order.map((r,i)=>`<article class="podium-card ${cls[i]}"><div class="medal">${med[i]} · ${labelMap[state.view]}</div><h3>${r.method}</h3><p>${r.backbone} · ${r.domain}</p><div class="podium-score">${rankValue(r).toFixed(1)}</div></article>`).join(''); }
     function updateChampion(r){ if(!r) { document.getElementById('champMethod').textContent='No matching rows'; document.getElementById('champMeta').textContent=`${state.domain}`; document.getElementById('champScore').textContent='—'; document.getElementById('champU').textContent='—'; document.getElementById('champA').textContent='—'; document.getElementById('champF').textContent='—'; return; } document.getElementById('champRank').textContent='#1 '+labelMap[state.view]; document.getElementById('champMethod').textContent=r.method; document.getElementById('champMeta').textContent=`${r.backbone} · ${r.domain}`; document.getElementById('champScore').textContent=rankValue(r).toFixed(1); document.getElementById('champLabel').textContent=state.view==='mgs'?'MGS':labelMap[state.view]; document.getElementById('champU').textContent=r.u.toFixed(1); document.getElementById('champA').textContent=r.a.toFixed(1); document.getElementById('champF').textContent=r.f.toFixed(1); }
-    function render(){ const ranked=rankedRows(); const rankMap=new Map(ranked.map((r,i)=>[r.id,i+1])); renderPodium(ranked.slice(0,3)); updateChampion(ranked[0]); const trs=tableRows().map(r=>{ const rank=rankMap.get(r.id); return `<tr><td><span class="rank-box ${rankClass(rank-1)}">${rank}</span></td><td class="method-cell"><b>${r.method}</b><span>${r.family}</span></td><td>${tagBackbone(r.backbone)}</td><td><span class="tag domain">${r.domain}</span></td><td>${metric(r.u,'good')}</td><td>${metric(r.a,'risk')}</td><td>${metric(r.f,'risk')}</td><td>${metric(r.mgs,'good',65)}</td></tr>`; }).join(''); document.getElementById('leaderboardBody').innerHTML=trs; document.getElementById('rowCount').textContent=`Showing ${tableRows().length} of ${rows.length} rows · Domain: ${state.domain}`; }
+    function render(){ const ranked=rankedRows(); const rankMap=new Map(ranked.map((r,i)=>[r.id,i+1])); renderPodium(ranked.slice(0,3)); updateChampion(ranked[0]); const trs=tableRows().map(r=>{ const rank=rankMap.get(r.id); return `<tr><td><span class="rank-box ${rankClass(rank-1)}">${rank}</span></td><td class="method-cell"><b>${r.method}</b><span>${r.family}</span></td><td>${tagBackbone(r.backbone)}</td><td><span class="tag domain">${r.domain}</span></td><td>${metric(r.u,'good')}</td><td>${metric(r.a,'risk')}</td><td>${metric(r.f,'risk')}</td><td>${metric(r.mgs,'good',85)}</td></tr>`; }).join(''); document.getElementById('leaderboardBody').innerHTML=trs; document.getElementById('rowCount').textContent=`Showing ${tableRows().length} of ${rows.length} rows · Domain: ${state.domain}`; }
 
     document.querySelectorAll('.view').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.view').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.view=btn.dataset.view; const [k,d]=sortForView(state.view); state.sortKey=k; state.sortDir=d; render(); }));
     document.querySelectorAll('.domain-tab').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.domain-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.domain=btn.dataset.domain; render(); }));
