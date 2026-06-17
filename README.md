@@ -298,7 +298,7 @@ If you use GateMem, please cite the accompanying paper.
 ```bibtex
 @article{gatemem2026,
   title={GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents},
-  author={Ren, Zhe and Yang, Yibo and Chen, Yimeng and Zhao, Zijun and Fu, Benshuo and Shu, Zhihao and Zhang, Bingjie and Guo, Dandan},
+  author={Ren, Zhe and Yang, Yibo and Chen, Yimeng and Zhao, Zijun and Fu, Benshuo and Shu, Zhihao and Zhang, Bingjie and Xu, Yangyang and Guo, Dandan and Yan, Shuicheng},
   year={2026}
 }
 ```
