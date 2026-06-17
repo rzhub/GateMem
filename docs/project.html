@@ -391,31 +391,36 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 34px;
-      background: rgba(21,21,21,.78);
-      backdrop-filter: blur(10px);
+      padding: 22px;
+      background: rgba(21,21,21,.84);
+      backdrop-filter: blur(12px);
     }
     .lightbox.open { display: flex; }
     .lightbox-inner {
-      width: min(1180px, 96vw);
-      max-height: 92vh;
-      display: grid;
+      width: calc(100vw - 44px);
+      height: calc(100vh - 58px);
+      display: flex;
+      flex-direction: column;
       gap: 10px;
+      align-items: center;
+      justify-content: center;
     }
     .lightbox img {
+      width: 100%;
+      height: min(86vh, calc(100vh - 110px));
       max-width: 100%;
-      max-height: 82vh;
-      margin: 0 auto;
+      object-fit: contain;
       display: block;
       background: #fffdf8;
       border: 1px solid rgba(255,250,240,.34);
-      box-shadow: 0 28px 80px rgba(0,0,0,.36);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
     }
     .lightbox-caption {
       margin: 0;
       color: #fff8eb;
       text-align: center;
       font-size: 13px;
+      max-width: min(1100px, 92vw);
     }
     .lightbox-close {
       position: fixed;
@@ -484,6 +489,16 @@
     .result-callout span { display:block; color:var(--muted); margin-top:6px; }
 
     .use-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .use-grid .panel {
+      display: flex;
+      flex-direction: column;
+    }
+    .use-grid pre {
+      min-height: 182px;
+    }
+    .use-grid .panel > div:last-child {
+      margin-top: 14px !important;
+    }
     pre {
       margin: 14px 0 0;
       overflow-x:auto;
@@ -554,7 +569,7 @@
       <div class="actions">
         <a class="btn" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a>
         <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Dataset</a>
-        <a class="btn primary" href="index.html#leaderboard">Leaderboard</a>
+        <a class="btn primary" href="index.html">Leaderboard</a>
       </div>
     </div>
   </header>
@@ -572,7 +587,7 @@
           <div class="hero-actions">
             <a class="btn primary" href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Explore Code</a>
             <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Download Dataset</a>
-            <a class="btn" href="index.html#leaderboard">View Leaderboard</a>
+            <a class="btn" href="index.html">View Leaderboard</a>
             <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
           </div>
         </div>
@@ -708,7 +723,7 @@
               <div class="finding"><b>Policy-aware retrieval improves safety.</b><span>Requester and access-policy metadata reduce leakage, but often trade off utility through missing evidence or over-refusal.</span></div>
               <div class="finding"><b>External memory is not governance by default.</b><span>Structured memory systems still need explicit authorization and deletion-aware controls.</span></div>
             </div>
-            <div class="result-callout"><b>Leaderboard available</b><span>Compare methods by domain and by MGS, Utility, Access Safety, and Forgetting Safety.</span><div style="margin-top:14px;"><a class="btn primary" href="index.html#leaderboard">Open Leaderboard</a></div></div>
+            <div class="result-callout"><b>Leaderboard available</b><span>Compare methods by domain and by MGS, Utility, Access Safety, and Forgetting Safety.</span><div style="margin-top:14px;"><a class="btn primary" href="index.html">Open Leaderboard</a></div></div>
           </div>
 
           <div class="figure-card" style="margin:0;">
@@ -798,7 +813,7 @@ python bench/scripts/run_eval.py \
   <footer>
     <div class="wrap footer-row">
       <div>© 2026 GateMem · Memory Governance Benchmark.</div>
-      <nav><a href="#top">Top</a><a href="index.html#leaderboard">Leaderboard</a><a href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a><a href="mailto:guodandan@jlu.edu.cn">Contact</a></nav>
+      <nav><a href="#top">Top</a><a href="index.html">Leaderboard</a><a href="https://github.com/rzhub/GateMem" target="_blank" rel="noreferrer">Code</a><a href="mailto:guodandan@jlu.edu.cn">Contact</a></nav>
     </div>
   </footer>
 
