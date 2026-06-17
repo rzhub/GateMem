@@ -96,9 +96,14 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 13px;
-      font-weight: 900;
-      letter-spacing: -0.035em;
+      min-height: 58px;
+    }
+    .brand-logo {
+      display: block;
+      height: 52px;
+      width: auto;
+      max-width: 240px;
+      object-fit: contain;
     }
     .seal {
       width: 46px;
@@ -674,6 +679,7 @@
     @media (max-width: 760px) {
       .wrap { padding: 0 18px; }
       .actions { display: none; }
+      .brand-logo { height: 44px; max-width: 210px; }
       .hero { padding-top: 36px; }
       h1 { font-size: 52px; }
       .subtitle { font-size: 23px; }
@@ -699,8 +705,7 @@
   <header>
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="GATEMEM academic leaderboard home">
-        <span class="seal">G</span>
-        <span>GATEMEM<small>Academic Leaderboard</small></span>
+        <img class="brand-logo" src="assets/gm_logo.svg" alt="GATEMEM Academic Leaderboard" />
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="#leaderboard">Leaderboard</a>
