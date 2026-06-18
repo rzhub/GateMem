@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/xxxx.xxxxx">📄 Paper</a> •
+  <a href="https://arxiv.org/abs/2606.18829v1">📄 Paper</a> •
   <a href="https://huggingface.co/datasets/Ray368/GateMem">🤗 Hugging Face Dataset</a> •
   <a href="./bench/README.md">🧪 Benchmark Toolkit</a> •
   <a href="./DATASET_CARD.md">🗂 Dataset Card</a> •
