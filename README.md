@@ -296,10 +296,14 @@ These fields are intended for **scoring and analysis only**.
 If you use GateMem, please cite the accompanying paper.
 
 ```bibtex
-@article{gatemem2026,
-  title={GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents},
-  author={Ren, Zhe and Yang, Yibo and Chen, Yimeng and Zhao, Zijun and Fu, Benshuo and Shu, Zhihao and Zhang, Bingjie and Xu, Yangyang and Guo, Dandan and Yan, Shuicheng},
-  year={2026}
+@misc{ren2026gatemembenchmarkingmemorygovernance,
+      title={GateMem: Benchmarking Memory Governance in Multi-Principal Shared-Memory Agents}, 
+      author={Zhe Ren and Yibo Yang and Yimeng Chen and Zijun Zhao and Benshuo Fu and Zhihao Shu and Bingjie Zhang and Yangyang Xu and Dandan Guo and Shuicheng Yan},
+      year={2026},
+      eprint={2606.18829},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2606.18829}, 
 }
 ```
 
