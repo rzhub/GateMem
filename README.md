@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/gm_logo.svg" width="30%" alt="GateMem logo">
+  <img src="assets/gm_logo.svg" width="32%" alt="GateMem logo">
 </p>
 <!-- <h1 align="center">GateMem</h1> -->
 <p align="center">
