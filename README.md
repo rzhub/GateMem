@@ -291,6 +291,10 @@ These fields are intended for **scoring and analysis only**.
 
 ---
 
+⭐ If you find GateMem useful, please consider starring the repository to help others discover the benchmark.
+
+---
+
 ## 📚 Citation
 
 If you use GateMem, please cite the accompanying paper.
