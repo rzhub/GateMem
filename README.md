@@ -29,6 +29,10 @@
   <img src="https://img.shields.io/badge/License-MIT-green" />
 </p>
 
+<p align="center">
+⭐ If you find GateMem useful, please consider starring the repository to help others discover the benchmark.
+</p>
+
 ---
 
 <p align="center">
@@ -288,10 +292,6 @@ During evaluation, methods should **not** use hidden annotation fields such as:
 * `leak_targets`
 
 These fields are intended for **scoring and analysis only**.
-
----
-
-⭐ If you find GateMem useful, please consider starring the repository to help others discover the benchmark.
 
 ---
 
