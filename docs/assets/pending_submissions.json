@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "submission_id": "1791769542-86258c1d",
+    "method": "TEST - DELETE AFTER E2E",
+    "backbone": "Other",
+    "domain": "Medical",
+    "family": "Other",
+    "contact": "",
+    "code_url": "",
+    "verification_status": "community",
+    "predictions_sha256": "3de4d86af6b41ea691ce6755483bbd21a095a054383df88d49ac170f31f03f90",
+    "judge_provider": "openai",
+    "judge_model": "gpt-4o",
+    "created_at": 1791769542,
+    "u": 0.0,
+    "a": 0.0,
+    "f": 0.0,
+    "mgs": 0.0,
+    "source": "community",
+    "verified": false,
+    "artifact_url": "https://huggingface.co/datasets/Ray368/GateMem-Submissions/tree/main/submissions/1791769542-86258c1d/community"
+  }
+]
