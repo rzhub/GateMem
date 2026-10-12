@@ -453,7 +453,7 @@
     .dot.note { background: var(--gold); }
 
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; min-width: 880px; border-collapse: collapse; }
+    table { width: 100%; min-width: 980px; border-collapse: collapse; }
     th, td {
       padding: 13px 14px;
       border-bottom: 1px solid var(--rule);
@@ -532,6 +532,19 @@
     .status.strong { color: #176c4d; background: #eaf3ef; border-color: #c5ded2; }
     .status.mixed { color: #8a5a14; background: #fbf2df; border-color: #e5cfa3; }
     .status.weak { color: #9f1d35; background: #fbe8eb; border-color: #e8bdc6; }
+    .verification-status {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--rule);
+      padding: 4px 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .verification-status.verified { color: #176c4d; background: #eaf3ef; border-color: #c5ded2; }
+    .verification-status.community { color: #8a5a14; background: #fbf2df; border-color: #e5cfa3; }
     .ledger-foot {
       display: flex;
       justify-content: space-between;
@@ -711,7 +724,7 @@
         <a href="project.html">Project Page</a>
         <a href="#leaderboard">Leaderboard</a>
         <a href="#methodology">Methodology</a>
-        <a href="#submit">Reproduce</a>
+        <a href="#submit">Submit</a>
         <a href="#bibtex">Citation</a>
       </nav>
       <div class="actions">
@@ -826,7 +839,7 @@
             <div class="footnote-line">
               <span><i class="dot good"></i> Higher is better for U, MGS, and safety views.</span>
               <span><i class="dot bad"></i> Lower is better for A and F.</span>
-              <span><i class="dot note"></i> Paper baseline values; judge-based labels.</span>
+              <span><i class="dot note"></i> Community results are contributor-evaluated; Verified results are maintainer re-scored.</span>
             </div>
           </div>
 
@@ -838,6 +851,7 @@
                   <th data-sort="method">System</th>
                   <th data-sort="backbone">Backbone</th>
                   <th data-sort="domain">Domain</th>
+                  <th class="no-sort">Status</th>
                   <th data-sort="u">U ↑</th>
                   <th data-sort="a">A ↓</th>
                   <th data-sort="f">F ↓</th>
@@ -867,7 +881,7 @@
           </article>
           <article class="method-card">
             <h3>Submission protocol</h3>
-            <p>Public submissions should provide model version, code commit, raw checkpoint outputs, normalized actions, judge labels, and runtime/token logs.</p>
+            <p>Run the official evaluator locally, then upload a complete package containing raw predictions, normalized outputs, deterministic scores, judge labels, and the summary.</p>
             <div class="mini-grid">
               <div class="mini"><b>outputs</b>JSONL bundle</div>
               <div class="mini"><b>judge</b>labels/logs</div>
@@ -877,12 +891,12 @@
           </article>
           <article class="method-card">
             <h3>Verification tiers</h3>
-            <p>For a maintained leaderboard, distinguish paper baselines, self-reported runs, reproduced runs, and manually audited submissions.</p>
+            <p>Community results use contributor-run evaluation artifacts. Verified results are independently re-scored by the maintainers from the exact same predictions.</p>
             <div class="mini-grid">
-              <div class="mini"><b>paper</b>baseline</div>
-              <div class="mini"><b>self</b>reported</div>
-              <div class="mini"><b>repro</b>rerun</div>
-              <div class="mini"><b>audit</b>inspected</div>
+              <div class="mini"><b>Community</b>submitted artifacts</div>
+              <div class="mini"><b>Community</b>maintainer reviewed</div>
+              <div class="mini"><b>Verified</b>same predictions</div>
+              <div class="mini"><b>Verified</b>official re-score</div>
             </div>
           </article>
         </div>
@@ -890,7 +904,7 @@
         <div class="submit" id="submit">
           <div>
             <h2>Submit to the GATEMEM ledger.</h2>
-            <p>Evaluate a memory agent under the released checkpoint protocol and submit standardized outputs for ranking across utility, access safety, active forgetting, and MGS.</p>
+            <p>Evaluate locally with the official scripts, package the resulting artifacts, and submit them for ranking across utility, access safety, active forgetting, and MGS.</p>
           </div>
           <div class="submit-actions">
             <a class="btn primary" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Result</a>
@@ -960,7 +974,7 @@
         console.error(err);
         const body = document.getElementById('leaderboardBody');
         if (body) {
-          body.innerHTML = `<tr><td colspan="8">Could not load leaderboard data. Please make sure <code>docs/assets/leaderboard.json</code> exists and is served with the page.</td></tr>`;
+          body.innerHTML = `<tr><td colspan="9">Could not load leaderboard data. Please make sure <code>docs/assets/leaderboard.json</code> exists and is served with the page.</td></tr>`;
         }
         if (rowCount) rowCount.textContent = 'Failed to load leaderboard data';
       }
@@ -974,6 +988,7 @@
     function rankedRows(){ return [...filteredRows()].sort((a,b)=>rankValue(b)-rankValue(a)); }
     function tableRows(){ const data=[...filteredRows()], k=state.sortKey; data.sort((a,b)=>{ let av=a[k], bv=b[k]; if(typeof av==='string') return state.sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av); return state.sortDir==='asc'?av-bv:bv-av; }); return data; }
     function rankClass(i){ return i===0?'top1':i===1?'top2':i===2?'top3':''; }
+    function escapeHtml(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch])); }
     function tagBackbone(b){
       let c = 'gemini';
       if (b.includes('GPT-5')) c = 'gpt5';
@@ -981,13 +996,14 @@
       else if (b.includes('Deepseek') || b.includes('DeepSeek')) c = 'deepseek';
       else if (b.includes('Llama')) c = 'llama';
       else if (b.includes('Gemini')) c = 'gemini';
-      return `<span class="tag ${c}">${b}</span>`;
+      return `<span class="tag ${c}">${escapeHtml(b)}</span>`;
     }
     function metric(v, kind, max=100){ const w=Math.max(3, Math.min(100, v/max*100)); return `<span class="metric"><span class="bar ${kind}"><i style="width:${w}%"></i></span>${v.toFixed(1)}</span>`; }
+    function verificationBadge(r){ const label=r.verified?'Verified':'Community', cls=r.verified?'verified':'community'; return `<span class="verification-status ${cls}">${label}</span>`; }
     function status(r){ if(r.mgs>=50&&r.a<=25&&r.f<=15) return '<span class="status strong">strong</span>'; if(r.mgs>=25||r.safety>=70) return '<span class="status mixed">mixed</span>'; return '<span class="status weak">brittle</span>'; }
-    function renderPodium(top){ const podium=document.getElementById('podium'); if(!top.length){ podium.innerHTML='<article class="podium-card first"><div class="medal">No entries</div><h3>No matching rows</h3><p>Adjust filters or domain selection.</p><div class="podium-score">—</div></article>'; return; } const order=[top[1],top[0],top[2]].filter(Boolean), cls=['second','first','third'], med=['second','first','third']; podium.innerHTML=order.map((r,i)=>`<article class="podium-card ${cls[i]}"><div class="medal">${med[i]} · ${labelMap[state.view]}</div><h3>${r.method}</h3><p>${r.backbone} · ${r.domain}</p><div class="podium-score">${rankValue(r).toFixed(1)}</div></article>`).join(''); }
+    function renderPodium(top){ const podium=document.getElementById('podium'); if(!top.length){ podium.innerHTML='<article class="podium-card first"><div class="medal">No entries</div><h3>No matching rows</h3><p>Adjust filters or domain selection.</p><div class="podium-score">—</div></article>'; return; } const order=[top[1],top[0],top[2]].filter(Boolean), cls=['second','first','third'], med=['second','first','third']; podium.innerHTML=order.map((r,i)=>`<article class="podium-card ${cls[i]}"><div class="medal">${med[i]} · ${labelMap[state.view]}</div><h3>${escapeHtml(r.method)}</h3><p>${escapeHtml(r.backbone)} · ${escapeHtml(r.domain)} · ${r.verified?'Verified':'Community'}</p><div class="podium-score">${rankValue(r).toFixed(1)}</div></article>`).join(''); }
     function updateChampion(r){ if(!r) { document.getElementById('champMethod').textContent='No matching rows'; document.getElementById('champMeta').textContent=`${state.domain}`; document.getElementById('champScore').textContent='—'; document.getElementById('champU').textContent='—'; document.getElementById('champA').textContent='—'; document.getElementById('champF').textContent='—'; return; } document.getElementById('champRank').textContent='#1 '+labelMap[state.view]; document.getElementById('champMethod').textContent=r.method; document.getElementById('champMeta').textContent=`${r.backbone} · ${r.domain}`; document.getElementById('champScore').textContent=rankValue(r).toFixed(1); document.getElementById('champLabel').textContent=state.view==='mgs'?'MGS':labelMap[state.view]; document.getElementById('champU').textContent=r.u.toFixed(1); document.getElementById('champA').textContent=r.a.toFixed(1); document.getElementById('champF').textContent=r.f.toFixed(1); }
-    function render(){ const ranked=rankedRows(); const rankMap=new Map(ranked.map((r,i)=>[r.id,i+1])); renderPodium(ranked.slice(0,3)); updateChampion(ranked[0]); const trs=tableRows().map(r=>{ const rank=rankMap.get(r.id); return `<tr><td><span class="rank-box ${rankClass(rank-1)}">${rank}</span></td><td class="method-cell"><b>${r.method}</b><span>${r.family}</span></td><td>${tagBackbone(r.backbone)}</td><td><span class="tag domain">${r.domain}</span></td><td>${metric(r.u,'good')}</td><td>${metric(r.a,'risk')}</td><td>${metric(r.f,'risk')}</td><td>${metric(r.mgs,'good',85)}</td></tr>`; }).join(''); document.getElementById('leaderboardBody').innerHTML=trs; document.getElementById('rowCount').textContent=`Showing ${tableRows().length} of ${rows.length} rows · Domain: ${state.domain}`; }
+    function render(){ const ranked=rankedRows(); const rankMap=new Map(ranked.map((r,i)=>[r.id,i+1])); renderPodium(ranked.slice(0,3)); updateChampion(ranked[0]); const trs=tableRows().map(r=>{ const rank=rankMap.get(r.id); return `<tr><td><span class="rank-box ${rankClass(rank-1)}">${rank}</span></td><td class="method-cell"><b>${escapeHtml(r.method)}</b><span>${escapeHtml(r.family)}</span></td><td>${tagBackbone(r.backbone)}</td><td><span class="tag domain">${escapeHtml(r.domain)}</span></td><td>${verificationBadge(r)}</td><td>${metric(r.u,'good')}</td><td>${metric(r.a,'risk')}</td><td>${metric(r.f,'risk')}</td><td>${metric(r.mgs,'good',85)}</td></tr>`; }).join(''); document.getElementById('leaderboardBody').innerHTML=trs; document.getElementById('rowCount').textContent=`Showing ${tableRows().length} of ${rows.length} rows · Domain: ${state.domain}`; }
 
     document.querySelectorAll('.view').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.view').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.view=btn.dataset.view; const [k,d]=sortForView(state.view); state.sortKey=k; state.sortDir=d; render(); }));
     document.querySelectorAll('.domain-tab').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.domain-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.domain=btn.dataset.domain; render(); }));
