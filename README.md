@@ -197,22 +197,29 @@ For full benchmark usage, see [`bench/README.md`](bench/README.md).
 
 ## 🔬 Evaluate Your Own Method
 
-GateMem provides an **online submission interface** for evaluating new methods and updating the public leaderboard.
+GateMem provides an **online submission interface** for validating pre-scored result packages and updating the public leaderboard.
 
 **Submit results:** 👉 [GateMem-Submit](https://huggingface.co/spaces/Ray368/GateMem-Submit)  
 **View leaderboard:** 🏆 [GateMem Leaderboard](https://rzhub.github.io/GateMem/) 
 
 ### Workflow
 
-1. Generate a `predictions.jsonl` file with your method.
-2. Upload it to the [GateMem Submission Space](https://huggingface.co/spaces/Ray368/GateMem-Submit).
-3. Fill in method metadata, including method name, backbone model, domain, contact email, and code/artifact link.
-4. The server scores the submission using the official GateMem evaluator.
-5. After maintainer approval, the result is added to the public leaderboard.
+1. Generate a complete `predictions.jsonl` file for one GateMem domain.
+2. Run the official evaluator locally with the official LLM judge configuration and your own API credentials.
+3. Package `predictions.jsonl`, `predictions.normalized.jsonl`, `scores.jsonl`, `judge_scores.jsonl`, and `summary.json` as `submission.zip`.
+4. Upload `submission.zip` to the [GateMem Submission Space](https://huggingface.co/spaces/Ray368/GateMem-Submit) and provide the method metadata.
+5. After maintainer approval, the result is published as **Community**. A result becomes **Verified** only after the maintainers re-score the exact same predictions.
+
+The public Space validates and records submitted artifacts; evaluation is performed locally. See [`docs/prediction_format.md`](docs/prediction_format.md) for the scoring and packaging commands.
+
+### Verification Status
+
+- **Community**: evaluated locally with the official scripts and submitted by the contributor; not yet independently re-scored by the maintainers.
+- **Verified**: the maintainers have re-scored the exact submitted `predictions.jsonl` and published the resulting official metrics.
 
 ### Prediction Format
 
-Your submission should be a JSONL file named `predictions.jsonl`, with one prediction per checkpoint.
+The evaluator input is a JSONL file named `predictions.jsonl`, with one prediction per checkpoint. The online interface accepts the complete `submission.zip` produced after local scoring.
 
 See [`docs/prediction_format.md`](docs/prediction_format.md).
 
@@ -223,7 +230,7 @@ To implement a method inside this repository, see:
 - [`docs/adding_new_agent.md`](docs/adding_new_agent.md)
 - [`bench/agents/example_agent.py`](bench/agents/example_agent.py)
 
-Once `predictions.jsonl` is generated, submit it through the online interface above.
+Once `predictions.jsonl` is generated, score and package it as described in [`docs/prediction_format.md`](docs/prediction_format.md), then upload `submission.zip` through the online interface above.
 
 ---
 
