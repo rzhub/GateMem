@@ -767,12 +767,13 @@ python bench/scripts/run_eval.py \
 
           <div class="panel">
             <h3>Online submission</h3>
-            <p>Upload <code>predictions.jsonl</code>, fill method metadata, and submit results for maintainer review.</p>
+            <p>Score your predictions locally with the official evaluator and your own API credentials, then upload the complete <code>submission.zip</code> for maintainer review.</p>
 <pre><code>1. Generate predictions.jsonl
-2. Open GateMem-Submit
-3. Upload predictions
-4. Review pending result
-5. Update public leaderboard</code></pre>
+2. Run the official LLM judge locally
+3. Package the five required result files
+4. Upload submission.zip to GateMem-Submit
+5. Publish as Community after review
+6. Re-score exact predictions for Verified</code></pre>
             <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
               <a class="btn accent" href="https://huggingface.co/spaces/Ray368/GateMem-Submit" target="_blank" rel="noreferrer">Submit Results</a>
               <a class="btn" href="https://huggingface.co/datasets/Ray368/GateMem" target="_blank" rel="noreferrer">Dataset</a>
